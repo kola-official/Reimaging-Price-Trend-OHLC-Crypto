@@ -1,9 +1,11 @@
 # Re-imagining price-trend OHLC representations
 
-**Repository:** `Reimaging-Price-Trend-ohcl-reasearch`  
+**Languages:** [English](README.md) · [中文](README.zh-CN.md)
+
+**Repository:** [`Reimaging-Price-Trend-ohcl-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch)  
 **Focus:** Can volume-weighted high–low construction improve CNN-based equity trend signals relative to standard daily OHLC bars?
 
-This repository packages the **empirical results** of a three-arm study on US equities (hfdata 1-minute source → daily bars → candlestick images → CNN ensembles). The narrative below emphasises **where representation choices move portfolio performance**, and places formal inference in a secondary role.
+This repository packages the **empirical results** of a three-arm study on US equities (hfdata 1-minute source → daily bars → candlestick images → CNN ensembles). The narrative emphasises **where representation choices move portfolio performance**, and places formal inference in a secondary role.
 
 ---
 
@@ -85,21 +87,20 @@ Protocol freeze for clip: [docs/vwpq-clip-oc-protocol.md](docs/vwpq-clip-oc-prot
 ## Repository layout
 
 ```text
-README.md                 ← this summary
+README.md                 ← English (this file)
+README.zh-CN.md           ← Chinese
 CITATIONS.md              ← data, code, and paper citations (authoritative)
 CITATION.cff              ← GitHub citation metadata
 NOTICE                    ← third-party attribution
 LICENSE                   ← Apache License 2.0
 docs/
-  METHODS.md              ← construction rules and evaluation path
+  METHODS.md
   vwpq-clip-oc-protocol.md
 configs/
   protocol_vwpq_clip_oc.json
 results/
   RESULTS.md
-  三臂对照-raw-expand-clip.md
-  终报-hfdata-raw-vs-vwpq-v3.6.md
-  tables/ · json/
+  tables/ · json/ · Chinese long reports
 src_snapshot/hfdata/      ← pure transforms (expand/clip, NAV helpers)
 ```
 
@@ -118,20 +119,6 @@ For the **expand** arm only, a shared monthly-block bootstrap (\(B=5000\)) was r
 | One-sided 5% support for θ > 0 | Not claimed | Shown in `results/json/final_summary.json` if needed |
 
 We treat these as **diagnostics**, not as the headline. The repository’s emphasis is the **signed, setting-level movement** in net Sharpe—especially **expand at I60/R60** and **clip at I5/R5**.
-
----
-
-## 中文摘要
-
-本仓库报告三种日线表示下的 CNN 趋势信号结果：**raw（标准 OHLC）**、**expand（分位高低价外扩、开收不变）**、**clip（分位高低价并裁剪开收）**。
-
-**提升集中在经济路径（10 bps 净夏普）而非平均排序相关：**
-
-- **expand 相对 raw**：对角线三格平均净夏普差约 **+0.13**；其中 **I60/R60 约 +2.0**，**I5/R5 约 +0.10**；I20/R20 为负。  
-- **clip 相对 raw**：**I5/R5 三臂中最优**（净夏普 −0.18 vs raw −0.40）；I20 优于 expand 但仍低于 raw；三格平均相对 raw 为负。  
-- Rank IC 平均变化接近零或略负；完整九格 expand 矩阵与三臂表见 `results/`。
-
-方法说明见 `docs/METHODS.md`；引用清单见 `CITATIONS.md`；机器可读数字见 `results/json/` 与 `results/tables/`。
 
 ---
 
