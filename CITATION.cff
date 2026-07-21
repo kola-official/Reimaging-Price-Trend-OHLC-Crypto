@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it and the Jiang-Kelly-Xiu (2023) paper."
+title: "Re-imagining Price-Trend OHLC Representations (raw vs expand vs clip)"
+type: software
+authors:
+  - name: "Contributors to Reimaging-Price-Trend-ohcl-reasearch"
+repository-code: "https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch"
+license: Apache-2.0
+date-released: "2026-07-21"
+abstract: >
+  Empirical comparison of standard daily OHLC bars against volume-weighted
+  high-low constructions (expand-not-clip and clip-open-close) for image-based
+  CNN equity trend signals on hfdata 1-minute US equities.
+references:
+  - type: article
+    authors:
+      - family-names: Jiang
+        given-names: Jingwen
+      - family-names: Kelly
+        given-names: Bryan
+      - family-names: Xiu
+        given-names: Dacheng
+    title: "(Re-)Imag(in)ing Price Trends"
+    year: 2023
+    journal: "The Journal of Finance"
+    volume: 78
+    issue: 6
+    start: 3193
+    end: 3249
+    doi: "10.1111/jofi.13268"

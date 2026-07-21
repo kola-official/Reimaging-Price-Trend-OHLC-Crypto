@@ -17,7 +17,7 @@ We compare three daily bar constructions under a shared training and evaluation 
 | **expand** | Open, close and volume fixed to raw; high/low from volume-weighted quantiles, **expanded** so that open and close remain inside the range |
 | **clip** | High/low from the same quantiles; open/close **clipped** into that band when they fall outside |
 
-Models are image CNNs in the spirit of *Re-Imag(in)ing Price Trends* (Jiang et al.), trained on 1993–2002 and evaluated on 2003–2025. Labels, moving averages and trade fills remain **raw** prices; only the drawn OHLC geometry differs.
+Models are image CNNs in the spirit of Jiang, Kelly & Xiu (2023), *The Journal of Finance* ([doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)), trained on 1993–2002 and evaluated on 2003–2025. Labels, moving averages and trade fills remain **raw** prices; only the drawn OHLC geometry differs.
 
 **Main empirical takeaways**
 
@@ -86,21 +86,24 @@ Protocol freeze for clip: [docs/vwpq-clip-oc-protocol.md](docs/vwpq-clip-oc-prot
 
 ```text
 README.md                 ← this summary
+CITATIONS.md              ← data, code, and paper citations (authoritative)
+CITATION.cff              ← GitHub citation metadata
+NOTICE                    ← third-party attribution
+LICENSE                   ← Apache License 2.0
 docs/
   METHODS.md              ← construction rules and evaluation path
   vwpq-clip-oc-protocol.md
 configs/
   protocol_vwpq_clip_oc.json
 results/
+  RESULTS.md
   三臂对照-raw-expand-clip.md
-  终报-hfdata-raw-vs-vwpq-v3.6.md   ← long Chinese expand report
-  final_summary.md / json/…         ← expand-arm machine summary
-  tables/                             ← CSV tables for plots and audits
-  json/                               ← full machine-readable dumps
-src_snapshot/hfdata/                  ← pure transforms (vwpq expand/clip, NAV helpers)
+  终报-hfdata-raw-vs-vwpq-v3.6.md
+  tables/ · json/
+src_snapshot/hfdata/      ← pure transforms (expand/clip, NAV helpers)
 ```
 
-Large training artefacts (image tensors, checkpoints) remain on the compute host and are not vendored here.
+Large training artefacts (image tensors, checkpoints, full 1-minute archives) remain on the compute host and are **not** vendored here.
 
 ---
 
@@ -128,16 +131,60 @@ We treat these as **diagnostics**, not as the headline. The repository’s empha
 - **clip 相对 raw**：**I5/R5 三臂中最优**（净夏普 −0.18 vs raw −0.40）；I20 优于 expand 但仍低于 raw；三格平均相对 raw 为负。  
 - Rank IC 平均变化接近零或略负；完整九格 expand 矩阵与三臂表见 `results/`。
 
-方法说明见 `docs/METHODS.md`；机器可读数字见 `results/json/` 与 `results/tables/`。
+方法说明见 `docs/METHODS.md`；引用清单见 `CITATIONS.md`；机器可读数字见 `results/json/` 与 `results/tables/`。
 
 ---
 
-## Citation and relation to prior work
+## Data sources
 
-This study is **representation-focused**: it does not claim to reproduce the absolute Accuracy / Rank IC / Sharpe numbers of Jiang et al. under official image archives. It asks whether **alternative high–low constructions** change behaviour under a fixed CNN pipeline on hfdata-derived bars.
+| Layer | Source | Notes |
+|-------|--------|--------|
+| **This study (minute → daily)** | **HF Data Library** US high-frequency OHLCV (1-minute parquet panel used on the experiment host) | Public dataset page: [Hugging Face `elkassabgi/hfdatalibrary`](https://huggingface.co/datasets/elkassabgi/hfdatalibrary). Local path used in experiments: `/share/home/user/snliu/hfdata_us_1min`. **Not redistributed** in this repo. |
+| **Jiang–Kelly–Xiu (2023) paper** | **CRSP** daily US equities (NYSE/AMEX/NASDAQ), typically via WRDS | PERMNO identifiers; paper sample commonly described from the early 1990s through 2019. **Not redistributed** here. |
+| **Derived bars** | raw / expand / clip daily OHLCV built in our pipeline | See [docs/METHODS.md](docs/METHODS.md). |
+
+Identifiers in our hfdata path are **source tickers / series files**, not CRSP PERMNOs. Results are conditional on that panel.
+
+Full wording: [CITATIONS.md §2](CITATIONS.md).
+
+---
+
+## Reference code repositories
+
+| Repository | URL | Role |
+|------------|-----|------|
+| **This project** | [kola-official/Reimaging-Price-Trend-ohcl-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch) | Results, protocols, small transform snapshot |
+| **ReImagining_Price_Trends** | [gaoym4321/ReImagining_Price_Trends](https://github.com/gaoym4321/ReImagining_Price_Trends) | Community/author-style implementation used for architecture orientation (pinned commit in local bootstrap config) |
+| **Stock_CNN** | [lich99/Stock_CNN](https://github.com/lich99/Stock_CNN) | Lightweight smoke / architecture cross-check |
+
+Third-party repositories retain **their own licences**. See [CITATIONS.md §3](CITATIONS.md) and [NOTICE](NOTICE).
+
+---
+
+## Reference paper
+
+> Jiang, J., Kelly, B., & Xiu, D. (2023). *(Re-)Imag(in)ing price trends.*  
+> *The Journal of Finance*, 78(6), 3193–3249.  
+> https://doi.org/10.1111/jofi.13268
+
+This study is **representation-focused**: it does **not** claim to reproduce the paper’s absolute Accuracy / Rank IC / Sharpe numbers on official CRSP image archives. It asks whether **alternative high–low constructions** change behaviour under a fixed CNN pipeline on hfdata-derived bars.
+
+BibTeX and secondary literature: [CITATIONS.md](CITATIONS.md).
 
 ---
 
 ## Licence
 
-Code snapshots in this repository are provided under the MIT Licence (see `LICENSE`). Data access remains subject to the terms of the hfdata source and host environment.
+| Item | Choice |
+|------|--------|
+| **Open-source licence** | **[Apache License 2.0](LICENSE)** |
+| **Attribution file** | [NOTICE](NOTICE) |
+| **Why Apache-2.0** | Clear terms for research code, explicit patent grant, standard NOTICE/attribution practice for citing third-party data and software without redistributing them |
+
+**Not covered by this licence:** CRSP data, HF Data Library dumps, the Journal of Finance article PDF/figures, or the full trees of third-party GitHub projects. Obtain those under their own terms.
+
+---
+
+## How to cite this repository
+
+See [CITATION.cff](CITATION.cff) and the BibTeX block in [CITATIONS.md §4](CITATIONS.md). Always cite **Jiang, Kelly & Xiu (2023)** when discussing the image-CNN price-trend framework.

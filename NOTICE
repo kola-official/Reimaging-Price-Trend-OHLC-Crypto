@@ -1,0 +1,31 @@
+Reimaging-Price-Trend-ohcl-reasearch
+Copyright 2026 Contributors
+
+This product is licensed under the Apache License, Version 2.0.
+See the LICENSE file for the full text.
+
+---------------------------------------------------------------------------
+Third-party data and software (not redistributed in full in this repository)
+---------------------------------------------------------------------------
+
+1. Academic paper (conceptual and methodological reference only)
+   Jiang, J., Kelly, B., & Xiu, D. (2023). (Re-)Imag(in)ing price trends.
+   Journal of Finance, 78(6), 3193–3249. https://doi.org/10.1111/jofi.13268
+   Copyright © American Finance Association / Wiley. Paper text and figures
+   are NOT redistributed here.
+
+2. Market data used in the underlying experiments
+   - Primary minute bars: HF Data Library (US OHLCV), e.g. Hugging Face dataset
+     “elkassabgi/hfdatalibrary” and related vendor feeds (e.g. pitrading noted in
+     local provenance). Users must obtain data under the dataset/vendor terms.
+   - The original Jiang–Kelly–Xiu study uses CRSP daily equity data (not redistributed).
+   CRSP is a product of the Center for Research in Security Prices, University of Chicago.
+
+3. Open-source code references (inspiration / comparison; not claimed as our work)
+   - https://github.com/gaoym4321/ReImagining_Price_Trends
+   - https://github.com/lich99/Stock_CNN
+   Those repositories retain their own licenses. Review them before reuse.
+
+This repository ships experimental reports, tables, protocol freezes, and a
+small pure-Python snapshot of bar transforms. It does not ship CRSP data,
+full 1-minute archives, official paper image packs, or third-party model weights.
