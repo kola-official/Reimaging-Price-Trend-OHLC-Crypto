@@ -1,0 +1,329 @@
+{
+  "generated_at": "2026-07-21T10:16:25.971171+00:00",
+  "split": {
+    "is": "1993-2002",
+    "oos": "2003-2025"
+  },
+  "arms": {
+    "raw": "standard OHLCV",
+    "share_expand": "path vwpq; weight=V; expand H/L",
+    "share_clip": "path vwpq_clip; weight=V; clip O/C",
+    "dollar_expand": "path vwpq_d; weight=p*V; expand H/L",
+    "dollar_clip": "path vwpq_d_clip; weight=p*V; clip O/C"
+  },
+  "scope": "diagonal (5,5)(20,20)(60,60); five seeds; purged_primary",
+  "unit_rank_ic": [
+    {
+      "I": 5,
+      "R": 5,
+      "arm": "raw",
+      "label": "raw",
+      "status": "complete",
+      "rank_ic": 0.008332873885325612,
+      "n": 425670,
+      "n_dates": 487
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "arm": "vwpq",
+      "label": "share_expand",
+      "status": "complete",
+      "rank_ic": 0.006253269501130181,
+      "n": 1158046,
+      "n_dates": 1122
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "arm": "vwpq_clip",
+      "label": "share_clip",
+      "status": "complete",
+      "rank_ic": 0.006454263489497071,
+      "n": 1158046,
+      "n_dates": 1122
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "arm": "vwpq_d",
+      "label": "dollar_expand",
+      "status": "complete",
+      "rank_ic": 0.006225148272666067,
+      "n": 1158046,
+      "n_dates": 1122
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "arm": "vwpq_d_clip",
+      "label": "dollar_clip",
+      "status": "complete",
+      "rank_ic": 0.006382593143123976,
+      "n": 1158046,
+      "n_dates": 1122
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "arm": "raw",
+      "label": "raw",
+      "status": "complete",
+      "rank_ic": 0.0017447572236309913,
+      "n": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "arm": "vwpq",
+      "label": "share_expand",
+      "status": "complete",
+      "rank_ic": -0.004723427402118599,
+      "n": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "arm": "vwpq_clip",
+      "label": "share_clip",
+      "status": "complete",
+      "rank_ic": -0.0072947990871354,
+      "n": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "arm": "vwpq_d",
+      "label": "dollar_expand",
+      "status": "complete",
+      "rank_ic": -0.004679347853676554,
+      "n": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "arm": "vwpq_d_clip",
+      "label": "dollar_clip",
+      "status": "complete",
+      "rank_ic": 0.002002850285852695,
+      "n": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "arm": "raw",
+      "label": "raw",
+      "status": "complete",
+      "rank_ic": 0.018075409684942357,
+      "n": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "arm": "vwpq",
+      "label": "share_expand",
+      "status": "complete",
+      "rank_ic": 0.018943055181330937,
+      "n": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "arm": "vwpq_clip",
+      "label": "share_clip",
+      "status": "complete",
+      "rank_ic": 0.015442536977244133,
+      "n": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "arm": "vwpq_d",
+      "label": "dollar_expand",
+      "status": "complete",
+      "rank_ic": 0.018761418781436848,
+      "n": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "arm": "vwpq_d_clip",
+      "label": "dollar_clip",
+      "status": "complete",
+      "rank_ic": 0.01590177359960805,
+      "n": 89876,
+      "n_dates": 87
+    }
+  ],
+  "paired_delta_rank_ic": [
+    {
+      "I": 5,
+      "R": 5,
+      "vs": "share_expand_minus_raw",
+      "delta_rank_ic": 0.00027279314636321816,
+      "n_common": 425670,
+      "n_dates": 487
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "vs": "share_clip_minus_raw",
+      "delta_rank_ic": 0.0006280433846376777,
+      "n_common": 425670,
+      "n_dates": 487
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "vs": "dollar_expand_minus_raw",
+      "delta_rank_ic": -0.0001189925959689234,
+      "n_common": 425670,
+      "n_dates": 487
+    },
+    {
+      "I": 5,
+      "R": 5,
+      "vs": "dollar_clip_minus_raw",
+      "delta_rank_ic": 0.0006853730868648641,
+      "n_common": 425670,
+      "n_dates": 487
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "vs": "share_expand_minus_raw",
+      "delta_rank_ic": -0.006468184625749593,
+      "n_common": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "vs": "share_clip_minus_raw",
+      "delta_rank_ic": -0.009039556310766392,
+      "n_common": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "vs": "dollar_expand_minus_raw",
+      "delta_rank_ic": -0.006424105077307549,
+      "n_common": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "vs": "dollar_clip_minus_raw",
+      "delta_rank_ic": 0.00025809306222170433,
+      "n_common": 270788,
+      "n_dates": 263
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "vs": "share_expand_minus_raw",
+      "delta_rank_ic": 0.0008676454963885855,
+      "n_common": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "vs": "share_clip_minus_raw",
+      "delta_rank_ic": -0.0026328727076982248,
+      "n_common": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "vs": "dollar_expand_minus_raw",
+      "delta_rank_ic": 0.0006860090964944947,
+      "n_common": 89876,
+      "n_dates": 87
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "vs": "dollar_clip_minus_raw",
+      "delta_rank_ic": -0.0021736360853342996,
+      "n_common": 89876,
+      "n_dates": 87
+    }
+  ],
+  "mean_delta_rank_ic_diagonal": {
+    "share_expand_minus_raw": -0.0017759153276659296,
+    "share_clip_minus_raw": -0.003681461877942313,
+    "dollar_expand_minus_raw": -0.001952362858927326,
+    "dollar_clip_minus_raw": -0.0004100566454159104
+  },
+  "unit_net_sharpe": [
+    {
+      "I": 5,
+      "R": 5,
+      "n_common": 425670,
+      "n_dates": 487,
+      "cost_bps": 10,
+      "sharpe_raw": -0.3990237143021129,
+      "sharpe_share_expand": -0.30134223761944384,
+      "sharpe_share_clip": -0.1843762376926474,
+      "sharpe_dollar_expand": -0.3121412913658873,
+      "sharpe_dollar_clip": -0.07164066242870631,
+      "delta_share_expand_minus_raw": 0.09768147668266908,
+      "delta_share_clip_minus_raw": 0.2146474766094655,
+      "delta_dollar_expand_minus_raw": 0.08688242293622561,
+      "delta_dollar_clip_minus_raw": 0.3273830518734066
+    },
+    {
+      "I": 20,
+      "R": 20,
+      "n_common": 270788,
+      "n_dates": 263,
+      "cost_bps": 10,
+      "sharpe_raw": 3.067982845082433,
+      "sharpe_share_expand": 1.3588772814082146,
+      "sharpe_share_clip": 1.8889794924414471,
+      "sharpe_dollar_expand": 1.4249347047822987,
+      "sharpe_dollar_clip": 3.1324896409616905,
+      "delta_share_expand_minus_raw": -1.7091055636742185,
+      "delta_share_clip_minus_raw": -1.179003352640986,
+      "delta_dollar_expand_minus_raw": -1.6430481403001345,
+      "delta_dollar_clip_minus_raw": 0.06450679587925734
+    },
+    {
+      "I": 60,
+      "R": 60,
+      "n_common": 89876,
+      "n_dates": 87,
+      "cost_bps": 10,
+      "sharpe_raw": 4.37220759337119,
+      "sharpe_share_expand": 6.367430979638731,
+      "sharpe_share_clip": 4.326324063006496,
+      "sharpe_dollar_expand": 6.25773900991146,
+      "sharpe_dollar_clip": 4.523790993938527,
+      "delta_share_expand_minus_raw": 1.9952233862675408,
+      "delta_share_clip_minus_raw": -0.04588353036469428,
+      "delta_dollar_expand_minus_raw": 1.8855314165402701,
+      "delta_dollar_clip_minus_raw": 0.1515834005673371
+    }
+  ],
+  "mean_delta_net_sharpe_diagonal": {
+    "share_expand_minus_raw": 0.12793309975866377,
+    "share_clip_minus_raw": -0.33674646879873826,
+    "dollar_expand_minus_raw": 0.10978856639212047,
+    "dollar_clip_minus_raw": 0.18115774944000038
+  },
+  "economic_path": "next_open_exec_with_frozen_exit_proxy; 10 bps; raw fills",
+  "status": "complete"
+}

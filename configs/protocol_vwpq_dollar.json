@@ -1,0 +1,59 @@
+{
+  "protocols": {
+    "vwpq_dollar_expand": {
+      "path_arm": "vwpq_d",
+      "weight": "typical_price * share_volume",
+      "oc": "identical_to_raw",
+      "hl": "dollar_quantiles_expanded_to_cover_OC"
+    },
+    "vwpq_dollar_clip": {
+      "path_arm": "vwpq_d_clip",
+      "weight": "typical_price * share_volume",
+      "oc": "clipped_into_dollar_quantile_band",
+      "hl": "dollar_quantiles_no_expand"
+    }
+  },
+  "contrast_share_volume": {
+    "vwpq": "weight=V only; expand O/C lock",
+    "vwpq_clip": "weight=V only; clip O/C"
+  },
+  "labels_ma_execution": "raw",
+  "split": {
+    "is": "1993-2002",
+    "oos": "2003-2025",
+    "exclude": [
+      2026
+    ]
+  },
+  "training_protocol": "purged_primary",
+  "frozen_matrix": {
+    "units": [
+      {
+        "I": 5,
+        "R": 5
+      },
+      {
+        "I": 20,
+        "R": 20
+      },
+      {
+        "I": 60,
+        "R": 60
+      }
+    ],
+    "arms": [
+      "vwpq_d",
+      "vwpq_d_clip"
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "scope": "diagonal_only"
+  },
+  "signed_at": "2026-07-21T06:32:35.042787+00:00",
+  "status": "signed"
+}

@@ -3,52 +3,63 @@
 **语言：** [English](README.md) · [中文](README.zh-CN.md)
 
 **仓库：** [`Reimaging-Price-Trend-OHLC-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch)  
-**问题：** 相对标准日线 OHLC，用成交量加权方式构造高低价，能否改善基于 CNN 图像的美股趋势信号？
+**问题：** 相对标准日线 OHLC，用**成交量 / 成交额**加权构造高低价，能否改善基于 CNN 图像的美股趋势信号？
 
-本仓库汇总三臂对照的**实验结果**（hfdata 1 分钟 → 日线 → K 线图像 → CNN 集成）。叙述侧重**表示选择如何改变组合表现**；正式统计推断放在次要位置。机制解读见 [docs/INTERPRETATION.md](docs/INTERPRETATION.md)。
+本仓库汇总**五臂对照**实验结果（hfdata 1 分钟 → 日线 → K 线图像 → CNN 集成）。叙述侧重**表示选择如何改变组合表现**；正式统计推断放在次要位置。机制解读见 [docs/INTERPRETATION.md](docs/INTERPRETATION.md)。
 
 ---
 
 ## 摘要
 
-在同一训练与评估协议下，比较三种日线构造：
+在同一训练与评估协议下，比较五种日线构造：
 
-| 臂 | 图像中改变的内容 |
-|----|------------------|
-| **raw** | 标准开 / 高 / 低 / 收 / 量 |
-| **expand** | 开、收、量与 raw 相同；高/低为成交量加权分位，并**外扩**使开收仍落在区间内 |
-| **clip** | 高/低同为分位带；开/收若落在带外则**裁剪进**该带 |
+| 臂 | 权重 | 图像中改变的内容 |
+|----|------|------------------|
+| **raw** | — | 标准开 / 高 / 低 / 收 / 量 |
+| **量权 expand** | 成交量 \(V\) | 开收量=raw；高/低为分位并**外扩**盖住开收 |
+| **量权 clip** | \(V\) | 高/低=分位带；开/收**裁进**带内 |
+| **额权 expand** | 成交额 \(pV\) | 规则同 expand；\(p=(H+L+C)/3\) |
+| **额权 clip** | \(pV\) | 规则同 clip，权为成交额 |
 
 模型为 Jiang、Kelly 与 Xiu（2023）图像 CNN 思路下的实现（*Journal of Finance*，[doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)）。训练期 **1993–2002**，样本外 **2003–2025**。标签、均线与成交价一律用 **raw** 价格，仅绘制几何不同。
 
-**主要结果**
+**主要结果（对角线、10 bps 经济路径）**
 
-1. **经济路径（单边 10 bps、下一开盘多空）：** 在对角线图像/持有期设定上，**expand 相对 raw 的平均净夏普约 +0.13**。增益主要来自 **I60/R60（约 +2.00）**，**I5/R5 亦约 +0.10**。  
-2. **clip** 在 **I5/R5** 上净夏普同时优于 raw 与 expand（clip **−0.18** vs raw **−0.40**、expand **−0.30**），在 **I20/R20** 上优于 expand（约 **+0.53**），但**不能**拉高三格相对 raw 的平均。  
-3. 截面排序（Rank IC）跨设定**有正有负**；表示差异在**组合夏普路径**上比在平均 Rank IC 上更清晰。
-
-expand 臂的 bootstrap 诊断见 [results/](results/)，**不是**本报告主线。
+1. **额权 clip** 相对 raw 的平均净夏普约 **+0.18**，且**三格差分均为正**——包括量权臂大幅落后的 **I20/R20**。  
+2. **量权 / 额权 expand** 仍是 I60 最强（相对 raw 约 **+1.9～+2.0**），但 I20 仍明显受损；三格平均约 **+0.11～0.13**。  
+3. **量权 clip** 主要利好 I5，**不能**抬高三格相对 raw 的平均（约 **−0.34**）。  
+4. Rank IC 差分仍小；**组合夏普**才是表示差异的主展示面。
 
 ---
 
 ## 结果亮点（提升落在何处）
 
-### 组合净夏普（对角线、共同键、10 bps）
+### 五臂组合净夏普（对角线、共同键、10 bps）
 
 路径：下一开盘入场 / 计划开盘离场（必要时冻结退出代理）；等权高–低十分位；年化 \(\sqrt{252}\)。
 
-| 设定（图像天数 × 持有天数） | raw | expand | clip | expand − raw | clip − raw |
-|----------------------------|----:|-------:|-----:|-------------:|-----------:|
-| **I5 / R5**（约周频） | −0.40 | −0.30 | **−0.18** | **+0.10** | **+0.21** |
-| **I20 / R20**（约月频） | 3.07 | 1.36 | 1.89 | −1.71 | −1.18 |
-| **I60 / R60**（约季频） | 4.37 | **6.37** | 4.33 | **+2.00** | −0.05 |
-| **三格等权平均** | — | — | — | **+0.13** | −0.34 |
+| 设定 | raw | 量权 expand | 量权 clip | 额权 expand | **额权 clip** |
+|------|----:|------------:|----------:|------------:|-------------:|
+| **I5 / R5**（约周频） | −0.40 | −0.30 | −0.18 | −0.31 | **−0.07** |
+| **I20 / R20**（约月频） | 3.07 | 1.36 | 1.89 | 1.42 | **3.13** |
+| **I60 / R60**（约季频） | 4.37 | **6.37** | 4.33 | 6.26 | 4.52 |
+
+**相对 raw 的三格平均 Δ 净夏普**
+
+| 臂 | 平均 Δ |
+|----|--------:|
+| 量权 expand | +0.13 |
+| 量权 clip | −0.34 |
+| 额权 expand | +0.11 |
+| **额权 clip** | **+0.18** |
+
+完整表见 [results/RESULTS.md](results/RESULTS.md) · `results/tables/five_way_economic_sharpe.csv`。
 
 **如何阅读提升**
 
-- **expand 相对 raw：** 平均净夏普差为**正（+0.13）**。最大贡献来自 **I60/R60**（约两个夏普单位）；I5 也有改善；I20 方向相反，故平均是得失相抵，而非处处抬升。  
-- **clip 相对 raw：** 提升**局部**。在 **I5/R5**，clip 为**三臂最优**；I20 介于 raw 与 expand 之间（优于 expand，仍低于 raw）；I60 与 raw 接近、远低于 expand。  
-- 绝对夏普数值可能偏大；**优先看臂间差分**，不宜把单一数字当作实盘年化夏普。
+- **额权 clip** 是本路径下**平均最优**表示：I5 提升最大，是**唯一**不在 I20 崩塌的非 raw 臂，I60 仍略优于 raw。  
+- **expand（量权或额权）** 价值集中在 **I60**（保留实体、压缩影线）；I20 仍受损。换成成交额权重**不能**消掉 expand 的 I20 惩罚。  
+- 绝对夏普数值可能偏大；**优先看臂间差分**。
 
 ### 为何 expand 在 I60 大增、在 I20 受损？
 
@@ -71,11 +82,12 @@ expand 臂的 bootstrap 诊断见 [results/](results/)，**不是**本报告主�
 
 | 对比（对角线三格平均） | Δ Rank IC |
 |------------------------|----------:|
-| expand − raw | −0.0018 |
-| clip − raw | −0.0037 |
-| clip − expand | −0.0020 |
+| 量权 expand − raw | −0.0018 |
+| 量权 clip − raw | −0.0037 |
+| 额权 expand − raw | −0.0020 |
+| 额权 clip − raw | −0.0004 |
 
-由表示引起的**排序**变化偏小，平均并不有利。**经济路径**上更易看到 expand 的 I60 与 clip 的 I5 改善。
+由表示引起的**排序**变化偏小。**经济路径**上更易看到 expand 的 I60 与额权 clip 的跨视界增益。
 
 ### expand 相对 raw 的九格 Rank IC 矩阵
 
@@ -92,12 +104,12 @@ raw 与 expand 各完成九个 \((I,R)\) 单元（五种子）。九格平均 Δ
 | 样本外 | 2003–2025（排除 2026） |
 | 模型 | 固定尺寸灰度 OHLC+均线图像 CNN；五随机种子；概率均值集成 |
 | 训练协议 | 时间块训练/验证 + 净化间隔（`purged_primary`） |
-| 全矩阵科学臂 | raw vs **expand** |
-| 三臂经济对照 | 仅对角线 (5,5)、(20,20)、(60,60) |
-| 成交 | 下一会话开盘；单边 10 bps；即使图像为 clip，成交开盘仍用 raw |
+| 全矩阵科学臂 | raw vs **量权 expand**（九格） |
+| 五臂经济对照 | 对角线 (5,5)/(20,20)/(60,60) × raw + 量权 expand/clip + 额权 expand/clip |
+| 成交 | 下一会话开盘；单边 10 bps；成交开盘一律 raw |
 
 方法细节：[docs/METHODS.md](docs/METHODS.md)。  
-clip 协议冻结：[docs/vwpq-clip-oc-protocol.md](docs/vwpq-clip-oc-protocol.md)。
+协议：[量权 clip](docs/vwpq-clip-oc-protocol.md) · [额权 expand/clip](docs/vwpq-dollar-protocol.md)。
 
 ---
 
@@ -106,7 +118,7 @@ clip 协议冻结：[docs/vwpq-clip-oc-protocol.md](docs/vwpq-clip-oc-protocol.m
 ```text
 README.md / README.zh-CN.md
 CITATIONS.md · CITATION.cff · NOTICE · LICENSE (Apache-2.0)
-docs/METHODS.md · docs/INTERPRETATION.md · docs/vwpq-clip-oc-protocol.md
+docs/METHODS.md · docs/INTERPRETATION.md · docs/vwpq-clip-oc-protocol.md · docs/vwpq-dollar-protocol.md
 results/ · configs/ · src_snapshot/
 ```
 
@@ -124,7 +136,7 @@ results/ · configs/ · src_snapshot/
 | 三格平均 Δ 净夏普 | ≈ +0.13 | 与上表经济结果一致 |
 | 5% 单侧支持 θ>0 | 不作主结论 | 见 `results/json/final_summary.json` |
 
-本文档强调**设定层面的净夏普符号与幅度**，尤其是 **I60/R60 的 expand** 与 **I5/R5 的 clip**。
+本文档强调**设定层面的净夏普符号与幅度**，尤其是 **I60 的 expand**、**额权 clip 的跨视界平均** 与 **I20 上量权臂的损失**。
 
 ---
 

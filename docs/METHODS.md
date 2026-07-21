@@ -42,7 +42,17 @@ Invalid / zero-volume sessions are marked invalid and are not treated as a succe
    \(O'=\mathrm{clip}(O,L,H)\), \(C'=\mathrm{clip}(C,L,H)\).  
 4. Volume remains raw.  
 
-**Labels, image moving averages, and portfolio open prices always use raw series.** Clip and expand only change the OHLC geometry fed to the CNN.
+### Dollar-volume expand (`vwpq_d`) and clip (`vwpq_d_clip`)
+
+Same geometry rules as share expand / share clip, but weights are **dollar volume**
+
+\[
+w_t = p_t V_t,\qquad p_t=\frac{H_t+L_t+C_t}{3}.
+\]
+
+Path ids: `vwpq_d` (expand), `vwpq_d_clip` (clip-OC). Protocol freeze: [vwpq-dollar-protocol.md](vwpq-dollar-protocol.md), `configs/protocol_vwpq_dollar.json`.
+
+**Labels, image moving averages, and portfolio open prices always use raw series.** All four representations only change the OHLC geometry fed to the CNN.
 
 Implementation: `src_snapshot/hfdata/vwpq.py`.
 
@@ -75,14 +85,17 @@ For each formation date with enough names, Spearman correlation between ensemble
 - One-way cost **10 bp** on traded notional.  
 - Net daily returns aggregated with planned concurrency weights; Sharpe uses \(\sqrt{252}\).  
 
-Three-way Sharpe tables restrict to **raw ∩ expand ∩ clip** keys on the diagonal \((I,R)\in\{(5,5),(20,20),(60,60)\}\).
+Three-way Sharpe tables restrict to **raw ∩ expand ∩ clip** keys on the diagonal \((I,R)\in\{(5,5),(20,20),(60,60)\}\).  
+Five-way Sharpe tables use the intersection of all arms present for that unit (raw + four representations).
 
 ## Scope notes
 
-| Arm | Rank IC matrix | Economic diagonal |
-|-----|----------------|-------------------|
-| raw | Full 9 \((I,R)\) | Yes (with expand/clip) |
-| expand | Full 9 \((I,R)\) | Yes |
-| clip | Diagonal 3 only | Yes |
+| Arm | Weight | O/C rule | Rank IC matrix | Economic diagonal |
+|-----|--------|----------|----------------|-------------------|
+| raw | — | standard | Full 9 \((I,R)\) | Yes |
+| share expand (`vwpq`) | \(V\) | lock O/C | Full 9 | Yes |
+| share clip (`vwpq_clip`) | \(V\) | clip O/C | Diagonal 3 | Yes |
+| dollar expand (`vwpq_d`) | \(pV\) | lock O/C | Diagonal 3 | Yes |
+| dollar clip (`vwpq_d_clip`) | \(pV\) | clip O/C | Diagonal 3 | Yes |
 
 Large image binaries and checkpoints are not stored in this GitHub repository.

@@ -3,52 +3,63 @@
 **Languages:** [English](README.md) · [中文](README.zh-CN.md)
 
 **Repository:** [`Reimaging-Price-Trend-OHLC-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch)  
-**Focus:** Can volume-weighted high–low construction improve CNN-based equity trend signals relative to standard daily OHLC bars?
+**Focus:** Can volume- and **dollar-volume**-weighted high–low constructions improve CNN-based equity trend signals relative to standard daily OHLC bars?
 
-This repository packages the **empirical results** of a three-arm study on US equities (hfdata 1-minute source → daily bars → candlestick images → CNN ensembles). The narrative emphasises **where representation choices move portfolio performance**, and places formal inference in a secondary role.
+This repository packages the **empirical results** of a five-arm study on US equities (hfdata 1-minute source → daily bars → candlestick images → CNN ensembles). The narrative emphasises **where representation choices move portfolio performance**, and places formal inference in a secondary role.
 
 ---
 
 ## Abstract
 
-We compare three daily bar constructions under a shared training and evaluation protocol:
+We compare five daily bar constructions under a shared training and evaluation protocol:
 
-| Arm | What changes in the image |
-|-----|---------------------------|
-| **raw** | Standard open / high / low / close / volume |
-| **expand** | Open, close and volume fixed to raw; high/low from volume-weighted quantiles, **expanded** so that open and close remain inside the range |
-| **clip** | High/low from the same quantiles; open/close **clipped** into that band when they fall outside |
+| Arm | Weight | What changes in the image |
+|-----|--------|---------------------------|
+| **raw** | — | Standard open / high / low / close / volume |
+| **share expand** | share volume \(V\) | O/C/V = raw; H/L from weighted quantiles, **expanded** so O/C stay inside |
+| **share clip** | \(V\) | H/L = quantile band; O/C **clipped** into the band |
+| **dollar expand** | dollar volume \(pV\) | Same expand rule; weights use typical price \(p=(H+L+C)/3\) |
+| **dollar clip** | \(pV\) | Same clip rule with dollar weights |
 
 Models are image CNNs in the spirit of Jiang, Kelly & Xiu (2023), *The Journal of Finance* ([doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)), trained on 1993–2002 and evaluated on 2003–2025. Labels, moving averages and trade fills remain **raw** prices; only the drawn OHLC geometry differs.
 
-**Main empirical takeaways**
+**Main empirical takeaways (diagonal, 10 bp economic path)**
 
-1. **Economic path (10 bp one-way costs, next-open long–short):** on the diagonal image/horizon settings, **expand raises mean net Sharpe versus raw by about +0.13**. The gain is concentrated in the **I60/R60** configuration (**+2.00** net Sharpe) and is also visible at **I5/R5** (**+0.10**).  
-2. **clip** improves **I5/R5** net Sharpe relative to both raw and expand (**clip −0.18** vs raw **−0.40** and expand **−0.30**), and improves **I20/R20** versus expand (**+0.53** Sharpe), but **does not** raise the three-setting average versus raw.  
-3. Cross-sectional ranking skill (Rank IC) is **mixed** across settings; representation effects are **more visible in the portfolio Sharpe path** than in average Rank IC.
-
-Formal bootstrap diagnostics for the expand arm are included under [results/](results/) for completeness; they are **not** the centre of this report.
+1. **Dollar clip** raises mean net Sharpe versus raw by about **+0.18**, with **positive gaps on every diagonal cell**—including **I20/R20**, where share-volume arms lose heavily.  
+2. **Share expand** and **dollar expand** remain the I60/R60 leaders (**~+1.9 to +2.0** vs raw) but both **hurt I20/R20** (~−1.6 to −1.7). Mean Δ ≈ **+0.11–0.13**.  
+3. **Share clip** helps most at I5 but **does not** raise the three-setting average versus raw (mean Δ ≈ **−0.34**).  
+4. Rank IC gaps stay small; **portfolio Sharpe** is where representation effects show up.
 
 ---
 
 ## Highlights (where performance moves)
 
-### Portfolio net Sharpe (diagonal, common keys, 10 bp)
+### Five-way portfolio net Sharpe (diagonal, common keys, 10 bp)
 
 Path: next open entry / planned open exit (frozen exit proxy when needed); equal-weight high-minus-low deciles; annualisation \(\sqrt{252}\).
 
-| Setting (image days × hold days) | raw | expand | clip | expand − raw | clip − raw |
-|----------------------------------:|----:|-------:|-----:|-------------:|-----------:|
-| **I5 / R5** (weekly-style) | −0.40 | −0.30 | **−0.18** | **+0.10** | **+0.21** |
-| **I20 / R20** (monthly-style) | 3.07 | 1.36 | 1.89 | −1.71 | −1.18 |
-| **I60 / R60** (quarterly-style) | 4.37 | **6.37** | 4.33 | **+2.00** | −0.05 |
-| **Equal-weight mean of three** | — | — | — | **+0.13** | −0.34 |
+| Setting | raw | share expand | share clip | dollar expand | **dollar clip** |
+|--------:|----:|-------------:|-----------:|--------------:|----------------:|
+| **I5 / R5** | −0.40 | −0.30 | −0.18 | −0.31 | **−0.07** |
+| **I20 / R20** | 3.07 | 1.36 | 1.89 | 1.42 | **3.13** |
+| **I60 / R60** | 4.37 | **6.37** | 4.33 | 6.26 | 4.52 |
+
+**Mean Δ net Sharpe vs raw (equal-weight of three cells)**
+
+| Arm | Mean Δ |
+|-----|--------:|
+| share expand | +0.13 |
+| share clip | −0.34 |
+| dollar expand | +0.11 |
+| **dollar clip** | **+0.18** |
+
+Full tables: [results/RESULTS.md](results/RESULTS.md) · `results/tables/five_way_economic_sharpe.csv`.
 
 **How to read the improvements**
 
-- **expand vs raw:** the **mean** net-Sharpe gap is **positive (+0.13)**. The largest contribution is **I60/R60**, where expand’s net Sharpe exceeds raw by roughly **two full Sharpe units** under this path. I5 also improves. I20 moves against expand, so the mean is a balance of gains and a loss—not a uniform lift.  
-- **clip vs raw:** gains are **local**. At **I5/R5**, clip is the **best of the three arms**. At I20, clip sits between raw and expand (better than expand, still below raw). At I60, clip is essentially tied with raw and far below expand.  
-- Absolute Sharpe levels can be large under the daily-return construction used here; **prefer gaps between arms** over interpreting a single number as a live trading Sharpe.
+- **Dollar clip** is the **best average** representation under this path: it improves I5 the most, is the **only** non-raw arm that does not collapse I20, and still edges raw at I60.  
+- **Expand (share or dollar)** concentrates value at **I60** (range denoising with intact body) and still fails at **I20**. Dollar weights do not remove that expand I20 penalty.  
+- Absolute Sharpe levels can be large under this daily-return construction; **prefer gaps between arms**.
 
 ### Why might expand help at I60 and hurt at I20?
 
@@ -70,11 +81,12 @@ Full write-up: [docs/INTERPRETATION.md](docs/INTERPRETATION.md).
 
 | Contrast (mean of three diagonal settings) | Δ Rank IC |
 |--------------------------------------------|----------:|
-| expand − raw | −0.0018 |
-| clip − raw | −0.0037 |
-| clip − expand | −0.0020 |
+| share expand − raw | −0.0018 |
+| share clip − raw | −0.0037 |
+| dollar expand − raw | −0.0020 |
+| dollar clip − raw | −0.0004 |
 
-Representation-driven **rank** shifts are small and, on average, not favourable. The **economic** path is where expand’s I60 improvement and clip’s I5 improvement appear most clearly.
+Representation-driven **rank** shifts are small. The **economic** path is where expand’s I60 lift and dollar-clip’s cross-horizon gains appear most clearly.
 
 ### Full nine-setting Rank IC matrix (expand vs raw)
 
@@ -91,12 +103,12 @@ Nine \((I,R)\) cells were trained for raw and expand (five seeds each). Mean Δ 
 | Out-of-sample | 2003–2025 (2026 excluded) |
 | Model | CNN on fixed-size greyscale OHLC+MA images; five random seeds; mean probability ensemble |
 | Training protocol | Time-blocked train/validation with purge gap (`purged_primary`) |
-| Primary scientific arm for full matrix | raw vs **expand** |
-| Three-way economic comparison | Diagonal only: (5,5), (20,20), (60,60) for raw, expand, and **clip** |
-| Execution | Next-session open; 10 bp one-way; raw open prices even when images use clip OHLC |
+| Primary scientific arm for full matrix | raw vs **share expand** (nine \((I,R)\) cells) |
+| Five-way economic comparison | Diagonal (5,5)/(20,20)/(60,60) × raw + share expand/clip + dollar expand/clip |
+| Execution | Next-session open; 10 bp one-way; raw open prices even when images use alternate OHLC |
 
 Method detail: [docs/METHODS.md](docs/METHODS.md).  
-Protocol freeze for clip: [docs/vwpq-clip-oc-protocol.md](docs/vwpq-clip-oc-protocol.md).
+Protocols: [share clip](docs/vwpq-clip-oc-protocol.md) · [dollar expand/clip](docs/vwpq-dollar-protocol.md).
 
 ---
 

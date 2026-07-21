@@ -101,4 +101,30 @@ Until those checks exist, the preferred scientific language is:
 
 > Expand’s large I60/R60 net-Sharpe gain, together with its I20/R20 deterioration, is **consistent with** a horizon-dependent trade-off in which **volume-aware compression of high–low extremes stabilises long visual paths but can discard mid-horizon texture that raw extremes still carry.**
 
-That sentence is the analysis we stand on in the public READMEs.
+That sentence is the analysis we stand on in the public READMEs for the **share-volume expand** arm.
+
+---
+
+## 7. Dollar-volume weights and the five-way extension
+
+Dollar weights replace \(w=V\) with \(w=pV\), \(p=(H+L+C)/3\). On many days the two weight systems are close; large intraday price moves tilt mass toward high-price minutes under dollar weighting.
+
+### 7.1 Empirical five-way pattern (10 bp diagonal)
+
+| Arm | Mean Δ Sharpe vs raw | I20 behaviour | I60 behaviour |
+|-----|---------------------:|---------------|---------------|
+| share expand | +0.13 | large loss | large gain (best cell) |
+| dollar expand | +0.11 | large loss (similar) | large gain (near share expand) |
+| share clip | −0.34 | still below raw | ≈ raw |
+| **dollar clip** | **+0.18** | **slight gain** | modest gain |
+
+### 7.2 Working readings
+
+1. **Expand is mostly about geometry, not share vs dollar.** Switching to \(pV\) barely moves the expand profile: I60 still wins, I20 still loses. The horizon-dependent range story above is therefore not an artefact of equal-weighting every share.  
+2. **Clip geometry + dollar weights is the robust average.** Dollar clip is the only arm with **positive Δ on every diagonal cell**. Restoring I20 (where share clip and both expands fail) is the distinctive economic fact. One speculative account is that clipping O/C with dollar-aware bands removes body outliers that are **price-level** as well as volume-level extremes—more helpful when the panel must rank names over monthly holds—while still allowing some range compression. This is **not** identified by ablation.  
+3. **Best single cell remains share expand at I60.** If the application is quarterly-style only, expand (share or dollar) still dominates clip.
+
+Preferred five-way language:
+
+> Dollar-volume weighting leaves the **expand** horizon trade-off essentially unchanged, but **dollar-weighted clip** lifts the three-setting mean net Sharpe versus raw by about **+0.18** and is the only representation that does not sacrifice the intermediate (I20) cell under this path.
+
