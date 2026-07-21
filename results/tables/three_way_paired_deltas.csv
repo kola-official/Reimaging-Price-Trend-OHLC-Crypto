@@ -1,0 +1,10 @@
+I,R,status,delta,n_common,n_dates,pair,vs
+5,5,complete,0.00027279314636321816,425670,487,vwpq-minus-raw,expand_minus_raw
+5,5,complete,0.0006280433846376777,425670,487,vwpq_clip-minus-raw,clip_minus_raw
+5,5,complete,0.0002009939883668895,1158046,1122,vwpq_clip-minus-vwpq,clip_minus_expand
+20,20,complete,-0.006468184625749593,270788,263,vwpq-minus-raw,expand_minus_raw
+20,20,complete,-0.009039556310766392,270788,263,vwpq_clip-minus-raw,clip_minus_raw
+20,20,complete,-0.0025713716850167987,270788,263,vwpq_clip-minus-vwpq,clip_minus_expand
+60,60,complete,0.0008676454963885855,89876,87,vwpq-minus-raw,expand_minus_raw
+60,60,complete,-0.0026328727076982248,89876,87,vwpq_clip-minus-raw,clip_minus_raw
+60,60,complete,-0.0035005182040868097,89876,87,vwpq_clip-minus-vwpq,clip_minus_expand

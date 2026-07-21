@@ -1,0 +1,65 @@
+{
+  "protocol_id": "vwpq_clip",
+  "aliases": [
+    "vwpq_clip_oc"
+  ],
+  "signed_at": "2026-07-21T02:55:55.144508+00:00",
+  "plan_parent": "hfdata-raw-vs-vwpq-experiment-plan.md v3.6",
+  "rule": {
+    "H_L": "volume_weighted_quantiles_q05_q95",
+    "O_C": "clip_into_[L,H]_when_outside",
+    "volume": "raw",
+    "invalid_zero_volume": "vwpq_valid=false; no raw/expand fallback as valid clip"
+  },
+  "contrast_with_expand": {
+    "expand_id": "vwpq",
+    "expand_rule": "O/C/V identical to raw; H/L expanded to cover O/C",
+    "clip_rule": "H/L = quantile band; O/C clipped into band"
+  },
+  "labels_ma_execution": {
+    "labels": "raw_close",
+    "ma": "raw_close",
+    "entry_exit_open": "raw_open",
+    "note": "representation-only clip for image OHLC body"
+  },
+  "split": {
+    "is": "1993-2002",
+    "oos": "2003-2025",
+    "exclude": [
+      2026
+    ]
+  },
+  "training_protocol": "purged_primary",
+  "frozen_matrix": {
+    "units": [
+      {
+        "I": 5,
+        "R": 5
+      },
+      {
+        "I": 20,
+        "R": 20
+      },
+      {
+        "I": 60,
+        "R": 60
+      }
+    ],
+    "arm": "vwpq_clip",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "scope": "diagonal_only_reduced",
+    "reason": "GPU time; off-diagonal clip out of scope for this freeze"
+  },
+  "output_namespaces": {
+    "daily": "data/hfdata/daily/vwpq_clip/",
+    "images": "data/hfdata/images/vwpq_clip/",
+    "preds": "outputs/hfdata/purged_primary/vwpq_clip/"
+  },
+  "status": "signed"
+}
