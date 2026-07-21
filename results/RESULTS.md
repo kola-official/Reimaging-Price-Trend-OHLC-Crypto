@@ -27,6 +27,8 @@ Source: `tables/three_way_economic_sharpe.csv`, `json/three_way_economic_sharpe.
 - **clip** delivers its **clearest gain at I5/R5**, where it is best among the three arms, and **outperforms expand at I20/R20**, while remaining below raw there.  
 - Averaging across the three settings, clip does not improve on raw; expand does on the mean gap, with heterogeneous cells.
 
+**Horizon reading (expand):** range compression via volume-weighted high–low is consistent with **stabilising long visual paths (I60)** while **discarding mid-horizon texture that raw extremes still carry (I20)**. See [docs/INTERPRETATION.md](../docs/INTERPRETATION.md).
+
 ---
 
 ## 2. Ranking path — paired Δ Rank IC (secondary)
