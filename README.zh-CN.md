@@ -2,10 +2,10 @@
 
 **语言：** [English](README.md) · [中文](README.zh-CN.md)
 
-**仓库：** [`Reimaging-Price-Trend-ohcl-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch)  
+**仓库：** [`Reimaging-Price-Trend-OHLC-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch)  
 **问题：** 相对标准日线 OHLC，用成交量加权方式构造高低价，能否改善基于 CNN 图像的美股趋势信号？
 
-本仓库汇总三臂对照的**实验结果**（hfdata 1 分钟 → 日线 → K 线图像 → CNN 集成）。叙述侧重**表示选择如何改变组合表现**；正式统计推断放在次要位置。
+本仓库汇总三臂对照的**实验结果**（hfdata 1 分钟 → 日线 → K 线图像 → CNN 集成）。叙述侧重**表示选择如何改变组合表现**；正式统计推断放在次要位置。机制解读见 [docs/INTERPRETATION.md](docs/INTERPRETATION.md)。
 
 ---
 
@@ -50,6 +50,23 @@ expand 臂的 bootstrap 诊断见 [results/](results/)，**不是**本报告主�
 - **clip 相对 raw：** 提升**局部**。在 **I5/R5**，clip 为**三臂最优**；I20 介于 raw 与 expand 之间（优于 expand，仍低于 raw）；I60 与 raw 接近、远低于 expand。  
 - 绝对夏普数值可能偏大；**优先看臂间差分**，不宜把单一数字当作实盘年化夏普。
 
+### 为何 expand 在 I60 大增、在 I20 受损？
+
+**expand** 保持开收等于 raw，仅用成交量加权分位重建高低价，再略外扩以盖住开收。许多交易日上，这会**削弱量轻、极尖的影线**，使图像更少被单笔极端报价“钉住”上下界。
+
+与上表一致、尚待消融验证的工作性解释是：**影线“纹理”的价值随预测视界而变**——
+
+| 视界 | expand − raw（净夏普） | 解读 |
+|------|------------------------|------|
+| **长（I60/R60）** | 大幅**上升**（约 +2） | 多月路径中的漂移与区间形态更重要；压缩量轻极值，有助于稳定纵向缩放、减轻对单日极端影线的过拟合，近似一种**视觉正则**。 |
+| **中（I20/R20）** | 大幅**下降**（约 −1.7） | 月频面板仍可能依赖更高频的不规则结构；raw 高低价保留这些痕迹，expand 的平滑可能**丢掉中频线索**。 |
+| **短（I5/R5）** | 小幅**上升**（约 +0.1） | 五日图中单日极端占比大；轻度压影线或有益，而 **clip**（同时改动开收实体）在该格上更好。 |
+
+一句话：**对长期视觉路径像噪声的东西，在中期仍可能是有用纹理。**  
+另：I60 的大增益来自 **expand 而非 clip**——说明长期收益更像是「**只改影线、保留实体**」的结果，而非「任意压缩都更好」。
+
+完整论述：[docs/INTERPRETATION.md](docs/INTERPRETATION.md)。
+
 ### 排序能力（配对 Δ Rank IC，描述性）
 
 | 对比（对角线三格平均） | Δ Rank IC |
@@ -87,13 +104,10 @@ clip 协议冻结：[docs/vwpq-clip-oc-protocol.md](docs/vwpq-clip-oc-protocol.m
 ## 仓库结构
 
 ```text
-README.md                 ← 英文
-README.zh-CN.md           ← 中文（本文件）
-CITATIONS.md              ← 数据、代码、文献引用（权威清单）
-CITATION.cff              ← GitHub 引用元数据
-NOTICE                    ← 第三方归属
-LICENSE                   ← Apache License 2.0
-docs/ · configs/ · results/ · src_snapshot/
+README.md / README.zh-CN.md
+CITATIONS.md · CITATION.cff · NOTICE · LICENSE (Apache-2.0)
+docs/METHODS.md · docs/INTERPRETATION.md · docs/vwpq-clip-oc-protocol.md
+results/ · configs/ · src_snapshot/
 ```
 
 完整 1 分钟库、图像二进制与训练检查点**不**放在本仓库。
@@ -132,7 +146,7 @@ docs/ · configs/ · results/ · src_snapshot/
 
 | 仓库 | 链接 | 作用 |
 |------|------|------|
-| **本项目** | [kola-official/Reimaging-Price-Trend-ohcl-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch) | 结果、协议、小型变换快照 |
+| **本项目** | [kola-official/Reimaging-Price-Trend-OHLC-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch) | 结果、协议、小型变换快照 |
 | **ReImagining_Price_Trends** | [gaoym4321/ReImagining_Price_Trends](https://github.com/gaoym4321/ReImagining_Price_Trends) | 作者风格/社区实现，用于结构对照（本地 bootstrap 配置中有 pin 提交） |
 | **Stock_CNN** | [lich99/Stock_CNN](https://github.com/lich99/Stock_CNN) | 轻量 smoke / 结构交叉检查 |
 

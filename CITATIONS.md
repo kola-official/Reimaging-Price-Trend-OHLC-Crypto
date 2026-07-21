@@ -91,7 +91,7 @@ Minute bars and full image tensors are **not** uploaded to this GitHub repositor
 
 | Item | Detail |
 |------|--------|
-| **GitHub** | [https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch) |
+| **GitHub** | [https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch) |
 | **Contents** | Result tables/JSON, method notes, protocol freeze, small pure-Python bar transforms |
 | **Local engineering workspace (not this remote)** | `price-trends-bootstrap` and RTX3090 `price_trends_workspace` hold full training I/O |
 
@@ -132,7 +132,7 @@ If you use our tables or protocol definitions:
                   Raw vs Volume-Weighted Expand vs Clip},
   author       = {{Contributors}},
   year         = {2026},
-  howpublished = {\url{https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch}},
+  howpublished = {\url{https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch}},
   note         = {Empirical results and protocol freezes; Apache-2.0}
 }
 ```

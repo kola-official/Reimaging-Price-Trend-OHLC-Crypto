@@ -3,8 +3,8 @@ message: "If you use this repository, please cite it and the Jiang-Kelly-Xiu (20
 title: "Re-imagining Price-Trend OHLC Representations (raw vs expand vs clip)"
 type: software
 authors:
-  - name: "Contributors to Reimaging-Price-Trend-ohcl-reasearch"
-repository-code: "https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch"
+  - name: "Contributors to Reimaging-Price-Trend-OHLC-reasearch"
+repository-code: "https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch"
 license: Apache-2.0
 date-released: "2026-07-21"
 abstract: >

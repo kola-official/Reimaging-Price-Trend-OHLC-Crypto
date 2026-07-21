@@ -2,7 +2,7 @@
 
 **Languages:** [English](README.md) · [中文](README.zh-CN.md)
 
-**Repository:** [`Reimaging-Price-Trend-ohcl-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch)  
+**Repository:** [`Reimaging-Price-Trend-OHLC-reasearch`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch)  
 **Focus:** Can volume-weighted high–low construction improve CNN-based equity trend signals relative to standard daily OHLC bars?
 
 This repository packages the **empirical results** of a three-arm study on US equities (hfdata 1-minute source → daily bars → candlestick images → CNN ensembles). The narrative emphasises **where representation choices move portfolio performance**, and places formal inference in a secondary role.
@@ -50,6 +50,22 @@ Path: next open entry / planned open exit (frozen exit proxy when needed); equal
 - **clip vs raw:** gains are **local**. At **I5/R5**, clip is the **best of the three arms**. At I20, clip sits between raw and expand (better than expand, still below raw). At I60, clip is essentially tied with raw and far below expand.  
 - Absolute Sharpe levels can be large under the daily-return construction used here; **prefer gaps between arms** over interpreting a single number as a live trading Sharpe.
 
+### Why might expand help at I60 and hurt at I20?
+
+Expand leaves open and close at raw values but rebuilds the high–low span from volume-weighted quantiles, then expands that span only far enough to contain open and close. On many days this **shortens volume-light extremes** in the drawn range, so the image is less pinned by single thin prints.
+
+A concise working account—consistent with the table, not yet identified by ablation—is **horizon-dependent use of range “texture”**:
+
+| Horizon | Expand − raw (net Sharpe) | Suggested reading |
+|---------|---------------------------|-------------------|
+| **Long (I60/R60)** | large **gain** (~+2) | Multi-month path features (drift, range regimes) may be easier to learn when extremes no longer dominate vertical scaling; range compression acts like mild visual regularisation. |
+| **Intermediate (I20/R20)** | large **loss** (~−1.7) | Monthly panels may still rely on higher-frequency irregularity that raw high–low preserves; softening extremes can discard mid-horizon cues. |
+| **Short (I5/R5)** | modest **gain** (~+0.1) | A single extreme day dominates a five-bar chart; mild range cleaning can help, while **clip** (which also moves open/close) helps further on this cell. |
+
+In short: **what behaves like noise for long visual horizons can remain useful texture at intermediate horizons.** Keeping open/close raw while only editing the range (expand) also differs from clip: expand—not clip—drives the I60 Sharpe lift, which suggests long-horizon gains are not “any compression helps,” but rather **range denoising with an intact body**.
+
+Full write-up: [docs/INTERPRETATION.md](docs/INTERPRETATION.md).
+
 ### Ranking skill (paired Rank IC gaps, descriptive)
 
 | Contrast (mean of three diagonal settings) | Δ Rank IC |
@@ -95,6 +111,7 @@ NOTICE                    ← third-party attribution
 LICENSE                   ← Apache License 2.0
 docs/
   METHODS.md
+  INTERPRETATION.md       ← horizon-dependent expand analysis
   vwpq-clip-oc-protocol.md
 configs/
   protocol_vwpq_clip_oc.json
@@ -140,7 +157,7 @@ Full wording: [CITATIONS.md §2](CITATIONS.md).
 
 | Repository | URL | Role |
 |------------|-----|------|
-| **This project** | [kola-official/Reimaging-Price-Trend-ohcl-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-ohcl-reasearch) | Results, protocols, small transform snapshot |
+| **This project** | [kola-official/Reimaging-Price-Trend-OHLC-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch) | Results, protocols, small transform snapshot |
 | **ReImagining_Price_Trends** | [gaoym4321/ReImagining_Price_Trends](https://github.com/gaoym4321/ReImagining_Price_Trends) | Community/author-style implementation used for architecture orientation (pinned commit in local bootstrap config) |
 | **Stock_CNN** | [lich99/Stock_CNN](https://github.com/lich99/Stock_CNN) | Lightweight smoke / architecture cross-check |
 
