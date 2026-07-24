@@ -1,13 +1,13 @@
-# Results tables — Study A (equity representations)
+# Results for Study A: equity OHLC representations
 
-> **Study B (crypto)** tables: [crypto/RESULTS.md](crypto/RESULTS.md).
+Results for Study B are in [crypto/RESULTS.md](crypto/RESULTS.md).
 
-## 0. Five-way economic path (latest — primary)
+## 0. Five-way economic path
 
-**Arms:** raw · share expand · share clip · **dollar expand** · **dollar clip**  
-**Weights:** share \(w=V\); dollar \(w=pV\) with \(p=(H+L+C)/3\).  
-**Path:** next-open high–low, 10 bp one-way, \(\sqrt{252}\).  
-**Keys:** intersection of all present arms per diagonal unit (includes raw ∩ four representations).
+Arms: raw, share expand, share clip, dollar expand, dollar clip.  
+Share weights use volume \(V\); dollar weights use \(pV\) with typical price \(p=(H+L+C)/3\).  
+Path: next-open high-minus-low, ten basis points one-way, annualisation \(\sqrt{252}\).  
+Keys: intersection of all arms present for each diagonal unit.
 
 | I | R | raw | share expand | share clip | dollar expand | dollar clip | Δ$exp−raw | Δ$clip−raw |
 |--:|--:|----:|-------------:|-----------:|--------------:|------------:|----------:|-----------:|

@@ -1,8 +1,8 @@
-# Interpretation (Study A): why expand can help long horizons and hurt intermediate ones
+# Interpretation of expand effects in Study A
 
-> **Companion.** Crypto transfer interpretation: [INTERPRETATION-crypto.md](INTERPRETATION-crypto.md).
+Companion note on cryptocurrency transfer: [INTERPRETATION-crypto.md](INTERPRETATION-crypto.md).
 
-This note is **interpretive**. It organises the three-arm net-Sharpe pattern into a working account of what expand does to the image, and what that may imply for short versus long forecasting windows. It does **not** establish causal identification of “noise” versus “signal.”
+This note organises the three-arm net-Sharpe pattern into an account of how expand alters image geometry and how that alteration may interact with short versus long forecasting windows. It does not establish causal identification of noise versus signal in the high–low range.
 
 ---
 

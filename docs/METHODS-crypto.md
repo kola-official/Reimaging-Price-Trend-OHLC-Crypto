@@ -1,64 +1,56 @@
-# Methods — Study B: crypto asset-class transfer
+# Methods for Study B: cryptocurrency asset-class transfer
 
-## Citations (read first)
+## Citations
 
-- Primary method paper: Jiang, Kelly & Xiu (2023), *The Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)
-- Full citation register: [CITATIONS.md](../CITATIONS.md)
-- Machine-readable design freeze: [configs/crypto_daily_reimaging_v1.yaml](../configs/crypto_daily_reimaging_v1.yaml)
-- Protocol narrative (engineering workspace origin): crypto `plan/experiment-protocol.md` (summarised here)
+Primary reference: Jiang, Kelly and Xiu (2023), *The Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
+Full register of data and code: [CITATIONS.md](../CITATIONS.md).  
+Machine-readable design: [configs/crypto_daily_reimaging_v1.yaml](../configs/crypto_daily_reimaging_v1.yaml).
 
-This study keeps the **image + CNN + cross-sectional ranking** design language of Jiang et al. (2023) and changes only the **asset class**: US equities → **single-exchange crypto spot**.
+This study retains the image, convolutional network and cross-sectional ranking design of Jiang et al. (2023) and changes only the asset class from US equities to single-exchange cryptocurrency spot markets.
 
 ---
 
 ## 1. Research question
 
-Jiang et al. (2023) show that greyscale OHLC(+MA/volume) images support out-of-sample equity trend signals and can transfer across international equities and time scales. They do **not** test transfer from equities to **cryptocurrencies**.
+Jiang et al. (2023) show that greyscale OHLC images with moving averages and volume support out-of-sample equity trend signals and can transfer across international equities and time scales. They do not examine transfer from equities to cryptocurrencies.
 
-**Question (confirmatory).**  
-Under a frozen Jiang-style daily image CNN, does **local retrain** on Binance USDT spot produce positive out-of-sample cross-sectional ranking skill for \(I,R\in\{5,20,60\}\)?
-
-Secondary arms designed in the protocol (US→crypto freeze-weight transfer; fine-tune) are **not** the headline of this results package; the published metrics here are **crypto retrain** only.
+The confirmatory question is whether local retrain of a frozen Jiang-style daily image CNN on Binance USDT spot produces positive out-of-sample cross-sectional ranking skill on the grid \(I,R\in\{5,20,60\}\). Metrics published in this package concern cryptocurrency retrain only. Protocol-level secondary arms such as frozen US-to-crypto weight transfer and fine-tuning are outside the reported headline tables.
 
 ---
 
 ## 2. Market and universe
 
-| Item | Choice |
-|------|--------|
-| Exchange / market | **Binance USDT spot** only (no perpetual futures in v1) |
-| Calendar | UTC natural day \([00{:}00,24{:}00)\) |
-| Source | 1-minute klines → daily OHLCV aggregation |
-| Content snapshot | 23,674 files / ~128.9 GB; content-set SHA-256 `bdf6acc4…c3fc558` (host manifest) |
-| Point-in-time eligibility | Listing age ≥ 120 days; ≥27/30 valid days; median 30-day quote volume ≥ 1e6 USDT; top 200 by **lagged** ADV; drop days with \(N<50\) for deciles |
-| Exclusions | Stablecoins / fiat proxies, leveraged tokens, index/ETF-like tokens, unresolved identity breaks |
-| Identity freeze v1 | Seven redenomination / ticker-reuse candidates → **split series at break** (no OHLC rescale) |
+| Element | Specification |
+|---------|---------------|
+| Exchange and market | Binance USDT spot; perpetual futures excluded |
+| Calendar | UTC natural day on the half-open interval from 00:00 to 24:00 |
+| Source | One-minute klines aggregated to daily OHLCV |
+| Content snapshot | 23,674 files, approximately 128.9 GB; content-set SHA-256 `bdf6acc4…c3fc558` on the host manifest |
+| Point-in-time eligibility | Listing age at least 120 days; at least 27 valid days in the last 30; median thirty-day quote volume at least one million USDT; top 200 by lagged average daily volume; formation days with fewer than 50 names dropped for decile sorts |
+| Exclusions | Stablecoins and fiat proxies, leveraged tokens, index and ETF-like tokens, unresolved identity breaks |
+| Identity freeze | Seven redenomination or ticker-reuse candidates induce series splits at the break; OHLC is not rescaled across the break |
 
-Survivorship: historical symbols come from exchange state + full kline inventory, not a 2026 survivor list.
+Historical symbols are drawn from exchange state files and the full kline inventory rather than from a survivor list observed in 2026.
 
 ---
 
-## 3. Daily bars, images, labels
+## 3. Daily bars, images and labels
 
 ### 3.1 Aggregation
 
-From coverage-valid 1m bars:
+From coverage-valid one-minute bars, open, high, low and close follow standard daily OHLC rules; base and quote volumes are summed. A day is invalid if minute coverage is below 95 percent; prices are not forward-filled.
 
-- open / high / low / close as standard daily OHLC  
-- base and quote volume summed  
-- day invalid if minute coverage &lt; 95% (no price forward-fill)
+The image volume panel uses base volume to preserve the closest analogy to share volume in equities. Liquidity filters use quote volume.
 
-Image volume panel uses **base volume** (closest stock-share analogy). Liquidity filters use **quote volume**.
+### 3.2 Image specification
 
-### 3.2 Image specification (author-exact renderer)
-
-| \(I\) | Tensor shape | MA | CNN parameter count |
-|------:|-------------:|---:|--------------------:|
+| \(I\) | Tensor shape | Moving average | CNN parameters |
+|------:|-------------:|---------------:|---------------:|
 | 5 | \(1\times32\times15\) | 5 | 155,138 |
 | 20 | \(1\times64\times60\) | 20 | 708,866 |
 | 60 | \(1\times96\times180\) | 60 | 2,952,962 |
 
-Greyscale OHLC bars + equal-length MA + bottom volume strip; missing history slots are **blank columns** (no interpolation). Pixel parity against the pinned author `DrawOHLC` path was required for I5/I20/I60 before formal datasets.
+Images are greyscale OHLC bars with equal-length moving averages and a bottom volume strip. Missing history slots appear as blank columns without interpolation. Pixel parity against the pinned author DrawOHLC path was required for I5, I20 and I60 before formal datasets were accepted.
 
 ### 3.3 Labels
 
@@ -66,7 +58,7 @@ Greyscale OHLC bars + equal-length MA + bottom volume strip; missing history slo
 r_{t\to t+R} = \frac{C_{t+R}}{C_t}-1,\qquad y=\mathbf{1}\{r>0\}.
 \]
 
-Primary ranking metric uses continuous \(r\), not only the binary label.
+Primary ranking metrics use continuous returns \(r\), not only the binary label.
 
 ---
 
@@ -74,60 +66,52 @@ Primary ranking metric uses continuous \(r\), not only the binary label.
 
 | Segment | Calendar | Role |
 |---------|----------|------|
-| In-sample (IS) | **2018-01-01 → 2021-12-31** | Train + purged validation |
-| Out-of-sample (OOS) | **2022-01-01 → 2025-12-31** | Frozen evaluation window |
-| Excluded | 2026 | Not in design |
+| In-sample | 2018-01-01 to 2021-12-31 | Training and purged validation |
+| Out-of-sample | 2022-01-01 to 2025-12-31 | Frozen evaluation window |
+| Excluded | 2026 | Outside the design |
 
-**Formation frequency.** Chart dates lie on an anchor-aligned grid with **step = \(R\)** (non-overlapping holds), matching the equity bootstrap’s weekly/monthly/quarterly style formation:
+Chart dates lie on an anchor-aligned grid with step equal to horizon \(R\), yielding non-overlapping holds analogous to weekly, monthly and quarterly formation in the equity bootstrap:
 
-| \(R\) | Step | OOS formation dates (approx.) |
-|------:|-----:|-------------------------------:|
+| \(R\) | Step | Out-of-sample formation dates |
+|------:|-----:|------------------------------:|
 | 5 | 5 days | 291 |
 | 20 | 20 days | 72 |
 | 60 | 60 days | 23 |
 
-**Purge.** Validation indices must satisfy  
-\(\mathrm{index} > \mathrm{train\_max} + R + (2I-2)\).  
-OOS datasets **reuse IS train-only normalisation** (never re-fit on OOS).
+Validation indices must satisfy \(\mathrm{index} > \mathrm{train\_max} + R + (2I-2)\). Out-of-sample datasets reuse in-sample train-only normalisation statistics and never re-estimate them on the evaluation window. After the identity freeze, one in-sample validation sample that crossed a break was removed, reducing the I20/R20 in-sample count from 3514 to 3513.
 
-**Identity filter.** After formal freeze, one IS validation sample crossing a break was dropped (3514 → 3513 on I20/R20).
-
-Code: [`src_snapshot/crypto/formation.py`](../src_snapshot/crypto/formation.py).
+Implementation of the formation grid is in [`src_snapshot/crypto/formation.py`](../src_snapshot/crypto/formation.py).
 
 ---
 
 ## 5. Model training
 
-- Architecture: Jiang-style 2D CNN family (`build_model(I)`), five seeds \(\{0,1,2,3,4\}\)
-- Loss: unweighted binary cross-entropy (no class weights)
-- Checkpoint: minimum validation loss with early stopping
-- Device: NVIDIA GeForce RTX 3090
-- OOS score: **mean probability** across five seeds
-
-Training produces engineering checkpoints; they are **not** redistributed in this repository.
+Architecture follows the Jiang-style two-dimensional CNN family with five seeds in \(\{0,1,2,3,4\}\). Training minimises unweighted binary cross-entropy without class weights. Checkpoints correspond to minimum validation loss under early stopping. Hardware is NVIDIA GeForce RTX 3090. Out-of-sample scores are mean predicted probabilities across the five seeds. Training checkpoints are not redistributed in this repository.
 
 ---
 
-## 6. Evaluation (what this package reports)
+## 6. Evaluation
 
-Reported in [results/crypto/](../results/crypto/):
+Results are reported in [results/crypto/](../results/crypto/).
 
-1. **Rank IC** — mean over formation dates of Spearman(\(\hat p\), \(r\))  
-2. **ICIR** — mean IC / std IC  
-3. **AUC / Brier** — pooled classification diagnostics  
-4. **LS Sharpe proxy** — equal-weight top−bottom decile period return, annualised \(\sqrt{365/R}\), **0 bps cost**, **close-to-close** fills  
+| Metric | Definition |
+|--------|------------|
+| Rank IC | Mean over formation dates of the Spearman correlation between ensemble up-probability and forward close-to-close return |
+| ICIR | Mean Rank IC divided by its standard deviation |
+| AUC and Brier | Pooled classification diagnostics |
+| Long–short Sharpe | Equal-weight top-minus-bottom decile period return, annualised by \(\sqrt{365/R}\), with zero transaction costs and close-to-close fills |
 
-**Explicitly not claimed as tradable alpha:** delayed 00:05–00:10 UTC VWAP execution + 10 bp costs (primitives exist in `execution.py` but bulk economic tables are not the headline freeze of this package).
+The long–short Sharpe path is an economic illustration only. Delayed entry on a 00:05–00:10 UTC window and ten-basis-point costs are specified as primitives in `execution.py` but are not the headline freeze of the published matrix.
 
 ---
 
-## 7. What differs from Study A (equity OHLC representations)
+## 7. Relation to Study A
 
-| | Study A (equity) | Study B (crypto) |
-|--|------------------|------------------|
-| Scientific lever | Bar **representation** (raw / expand / clip) | **Asset class** (spot crypto vs equity design) |
-| Data | hfdata US 1-minute equities | Binance USDT spot 1-minute |
-| IS / OOS | 1993–2002 / 2003–2025 | 2018–2021 / 2022–2025 |
-| Main table | Net Sharpe gaps across arms | Nine-cell Rank IC matrix |
+|  | Study A | Study B |
+|--|---------|---------|
+| Scientific lever | Bar representation under raw, expand and clip rules | Asset class under cryptocurrency spot |
+| Data | hfdata US one-minute equities | Binance USDT spot one-minute |
+| Sample | 1993–2002 in-sample; 2003–2025 out-of-sample | 2018–2021 in-sample; 2022–2025 out-of-sample |
+| Principal table | Net Sharpe gaps across representation arms | Nine-cell Rank IC matrix |
 
-Both studies share the Jiang et al. (2023) image-CNN agenda and the same \(I,R\in\{5,20,60\}\) grid language.
+Both studies share the Jiang et al. (2023) image-CNN agenda and the grid \(I,R\in\{5,20,60\}\).

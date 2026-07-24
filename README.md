@@ -1,147 +1,149 @@
-# Re-imagining price-trend OHLC — equities & crypto
+# Re-imagining price-trend OHLC representations and crypto asset-class transfer
 
 **Languages:** [English](README.md) · [中文](README.zh-CN.md)
 
-**Repository:** [`Reimaging-Price-Trend-OHLC-Crypto`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto)  
-*(formerly `Reimaging-Price-Trend-OHLC-reasearch`)*
+**Repository:** [Reimaging-Price-Trend-OHLC-Crypto](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto)
 
-This repository packages **two related empirical studies** that share the image-CNN design language of Jiang, Kelly & Xiu (2023), *The Journal of Finance* ([doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)):
+This repository reports two empirical studies that share the image-based convolutional design of Jiang, Kelly and Xiu (2023) in *The Journal of Finance* ([doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)). Study A varies the construction of daily equity bars under a fixed learning protocol. Study B holds that protocol fixed and replaces the equity universe with single-exchange cryptocurrency spot markets. Full one-minute archives, image tensors and model checkpoints remain on the experiment host; the repository distributes design specifications, result tables, interpretation notes and compact pure-Python utilities.
 
-| Study | Lever | Question |
-|-------|--------|----------|
-| **A — Equity OHLC representations** | How the **bar is drawn** (raw / volume-weighted expand / clip) | Can representation choices improve US equity image signals? |
-| **B — Crypto asset-class transfer** | How the **universe** changes (Binance USDT spot) | Does the same daily image recipe survive outside equities? |
-
-Large artefacts (1-minute archives, image tensors, checkpoints) stay on the compute host and are **not** vendored here. What *is* here: design freezes, result tables, interpretation notes, and small pure-Python snapshots.
+| Study | Experimental lever | Research question |
+|-------|--------------------|-------------------|
+| A. Equity OHLC representations | Daily bar geometry under raw, share-volume and dollar-volume expand and clip rules | Whether representation choices alter out-of-sample equity portfolio performance |
+| B. Crypto asset-class transfer | Binance USDT spot cross-section with local retrain | Whether the same daily image specification retains cross-sectional ranking skill outside equities |
 
 ---
 
-## Abstract (both studies)
+## Abstract
 
-### Study A — volume- and dollar-weighted OHLC geometry (US equities)
+### Study A. Volume- and dollar-weighted OHLC geometry for US equities
 
-Five daily constructions under one training path (hfdata 1-minute → daily bars → greyscale images → five-seed CNNs; IS 1993–2002, OOS 2003–2025). **Dollar clip** raises mean diagonal net Sharpe versus raw by about **+0.18**; **expand** arms dominate **I60/R60** but hurt **I20/R20**. Rank IC gaps stay small—**portfolio Sharpe** carries the representation story.  
-→ [Study A highlights](#study-a--equity-ohlc-representations) · [docs/METHODS.md](docs/METHODS.md) · [docs/INTERPRETATION.md](docs/INTERPRETATION.md)
+Under a shared training and evaluation path from hfdata one-minute bars to greyscale OHLC images and five-seed CNNs, with in-sample years 1993–2002 and out-of-sample years 2003–2025, dollar-volume clip raises mean diagonal net Sharpe relative to raw by approximately 0.18. Expand constructions dominate the I60/R60 cell yet deteriorate I20/R20. Cross-sectional Rank IC differences across arms remain small; portfolio Sharpe is the principal surface on which representation effects appear.
 
-### Study B — crypto spot retrain (asset-class transfer)
+Documentation: [docs/METHODS.md](docs/METHODS.md), [docs/INTERPRETATION.md](docs/INTERPRETATION.md), [results/RESULTS.md](results/RESULTS.md).
 
-Same \(I,R\in\{5,20,60\}\) image CNNs, retrained on **Binance USDT spot** (IS 2018–2021, OOS 2022–2025). The **primary cell I20/R20 fails** (Rank IC **−0.0495**). Among 20-day forecasts, **I60/R20** is the most coherent positive cell (Rank IC **+0.032**, best LS Sharpe proxy), yet **still far weaker than equity replications**—consistent with a **thin, short, highly co-moving crypto book**.  
-→ [Study B highlights](#study-b--crypto-asset-class-transfer) · [docs/METHODS-crypto.md](docs/METHODS-crypto.md) · [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md)
+### Study B. Cryptocurrency spot retrain
+
+The same grid \(I,R\in\{5,20,60\}\) is retrained on Binance USDT spot with in-sample years 2018–2021 and out-of-sample years 2022–2025. The primary cell I20/R20 yields Rank IC of −0.0495 and AUC of 0.450. For twenty-day horizons, I60/R20 attains Rank IC of 0.032 and the strongest zero-cost long–short Sharpe proxy in the matrix, yet remains well below equity-scale Rank IC levels near 0.05 in related US replications. The pattern is consistent with a shallow, short and highly co-moving cryptocurrency cross-section that does not support equity-like visual trend extraction.
+
+Documentation: [docs/METHODS-crypto.md](docs/METHODS-crypto.md), [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md), [results/crypto/RESULTS.md](results/crypto/RESULTS.md).
 
 ---
 
-## Study A — equity OHLC representations
+## Study A. Equity OHLC representations
 
-### Five-way portfolio net Sharpe (diagonal, common keys, 10 bp)
+### Portfolio net Sharpe on the diagonal under a ten-basis-point path
 
-Path: next open entry / planned open exit; equal-weight high-minus-low; annualisation \(\sqrt{252}\).
+Entry is at the next session open; exit follows the planned open after horizon \(R\). Portfolios are equal-weight high-minus-low deciles. Sharpe ratios use \(\sqrt{252}\).
 
-| Setting | raw | share expand | share clip | dollar expand | **dollar clip** |
-|--------:|----:|-------------:|-----------:|--------------:|----------------:|
-| **I5 / R5** | −0.40 | −0.30 | −0.18 | −0.31 | **−0.07** |
-| **I20 / R20** | 3.07 | 1.36 | 1.89 | 1.42 | **3.13** |
-| **I60 / R60** | 4.37 | **6.37** | 4.33 | 6.26 | 4.52 |
+| Setting | raw | share expand | share clip | dollar expand | dollar clip |
+|--------:|----:|-------------:|-----------:|--------------:|------------:|
+| I5 / R5 | −0.40 | −0.30 | −0.18 | −0.31 | −0.07 |
+| I20 / R20 | 3.07 | 1.36 | 1.89 | 1.42 | 3.13 |
+| I60 / R60 | 4.37 | 6.37 | 4.33 | 6.26 | 4.52 |
 
-**Mean Δ net Sharpe vs raw (three diagonal cells)**
+Mean change in net Sharpe relative to raw across the three diagonal cells:
 
 | Arm | Mean Δ |
 |-----|--------:|
 | share expand | +0.13 |
 | share clip | −0.34 |
 | dollar expand | +0.11 |
-| **dollar clip** | **+0.18** |
+| dollar clip | +0.18 |
 
-Full tables: [results/RESULTS.md](results/RESULTS.md). Horizon-dependent expand reading: [docs/INTERPRETATION.md](docs/INTERPRETATION.md).
+Dollar clip records the highest average improvement and is the only non-raw arm that does not collapse I20/R20. Expand concentrates gains at I60/R60. Horizon-dependent interpretation of expand is developed in [docs/INTERPRETATION.md](docs/INTERPRETATION.md). Complete tables appear in [results/RESULTS.md](results/RESULTS.md).
 
 ---
 
-## Study B — crypto asset-class transfer
+## Study B. Crypto asset-class transfer
 
-### Design (concise)
+### Design
 
-| Item | Choice |
-|------|--------|
-| Market | Binance **USDT spot** only (no perps in v1) |
-| Source | 1-minute klines → UTC daily OHLC |
-| Universe | Point-in-time top-200 by lagged quote ADV; identity freeze (split at breaks) |
-| IS / OOS | **2018–2021** / **2022–2025** |
-| Grid | \(I,R\in\{5,20,60\}\) (nine cells); formation step \(=R\) |
-| Model | Jiang-style CNN; five seeds; mean probability |
-| Reported path | Close-to-close Rank IC; LS Sharpe is a **0 bp proxy** (not delayed VWAP) |
+| Element | Specification |
+|---------|---------------|
+| Market | Binance USDT spot; perpetual futures excluded |
+| Data | One-minute klines aggregated to UTC daily OHLC |
+| Universe | Point-in-time top 200 by lagged quote volume; identity breaks induce series splits |
+| Sample | In-sample 2018–2021; out-of-sample 2022–2025 |
+| Grid | \(I,R\in\{5,20,60\}\); formation step equal to \(R\) |
+| Model | Jiang-style CNN; five seeds; ensemble mean probability |
+| Reported metrics | Close-to-close Rank IC; zero-cost long–short Sharpe as an economic illustration only |
 
-Methods: [docs/METHODS-crypto.md](docs/METHODS-crypto.md) · Protocol: [docs/crypto-protocol.md](docs/crypto-protocol.md) · Config: [configs/crypto_daily_reimaging_v1.yaml](configs/crypto_daily_reimaging_v1.yaml)
+See [docs/METHODS-crypto.md](docs/METHODS-crypto.md), [docs/crypto-protocol.md](docs/crypto-protocol.md) and [configs/crypto_daily_reimaging_v1.yaml](configs/crypto_daily_reimaging_v1.yaml).
 
-### Nine-cell OOS Rank IC (2026-07-24 CUDA audit)
+### Out-of-sample Rank IC matrix
+
+Evaluation date 2026-07-24 on dual RTX 3090 hardware.
 
 |  | R5 | R20 | R60 |
 |--|---:|---:|---:|
-| **I5** | +0.014 | **+0.034** | +0.026 |
-| **I20** | +0.018 | **−0.049** | +0.002 |
-| **I60** | +0.009 | **+0.032** | −0.009 |
+| I5 | +0.014 | +0.034 | +0.026 |
+| I20 | +0.018 | −0.049 | +0.002 |
+| I60 | +0.009 | +0.032 | −0.009 |
 
-Selected economic proxies (0 bp, close-to-close decile LS Sharpe): **I60/R20 ≈ 1.36**, **I5/R20 ≈ 0.72**, **I20/R20 ≈ −1.52**.  
-Full table: [results/crypto/RESULTS.md](results/crypto/RESULTS.md) · CSV: [results/crypto/tables/crypto_nine_cell_oos.csv](results/crypto/tables/crypto_nine_cell_oos.csv)
+Zero-cost close-to-close long–short Sharpe proxies include 1.36 for I60/R20, 0.72 for I5/R20 and −1.52 for I20/R20. The full matrix is in [results/crypto/RESULTS.md](results/crypto/RESULTS.md) and [results/crypto/tables/crypto_nine_cell_oos.csv](results/crypto/tables/crypto_nine_cell_oos.csv).
 
-### How to read Study B (interpretation first)
+### Interpretation
 
-1. **Transfer of the equity recipe fails at the primary cell.**  
-   I20/R20 is the natural monthly-style workhorse in equity work; here Rank IC is **negative** and AUC is **below 0.5**. This is a **negative confirmatory result**, not a mild attenuation.
+Transfer of the equity specification fails at the primary cell. I20/R20 is the standard monthly-style workhorse in equity applications, yet here Rank IC is negative and classification AUC lies below one half. This is a negative confirmatory finding rather than mild attenuation of a positive signal.
 
-2. **When medium-horizon ranking is least fragile, longer lookback wins.**  
-   For **20-day** labels, **60-day images (I60/R20)** match near-best Rank IC and post the **best** LS Sharpe proxy—i.e. the network appears to need a **longer visual history** than the forecast horizon. Canonical I20 context is not privileged.
+For twenty-day labels, sixty-day image inputs are the most coherent positive configuration. I60/R20 matches near-maximal Rank IC and records the strongest long–short Sharpe proxy in the grid. The network appears to require visual history longer than the forecast horizon when any stable ranking structure is present. Equality of \(I\) and \(R\) is not privileged outside equities.
 
-3. **Even the best crypto cells underperform equity-scale benchmarks.**  
-   Related US equity I20 pipelines report Rank IC on the order of **~0.05** with large multi-year H–L Sharpes after costs. Crypto’s best Rank IC (~0.03) is smaller, grid-unstable, and estimated on **72** non-overlapping R20 dates (R60 only **23**).
+Even the strongest cryptocurrency cells remain weaker than equity benchmarks. Related US equity I20 ensembles report Rank IC near 0.05 with large multi-year high-minus-low Sharpes after costs. Cryptocurrency best Rank IC is near 0.03, unstable across the nine-cell grid, and estimated from only 72 non-overlapping twenty-day formation dates, with sixty-day formation limited to 23 dates.
 
-4. **Working hypothesis: the crypto book is “too small” for this method.**  
-   More precisely: a **shallow, short, highly co-moving** point-in-time cross-section (top-200, post-2017 liquidity, shared exchange/quote shocks) does not supply the panel mass that Jiang-style image CNNs exploit in equities. This is a hypothesis about **method × market fit**, not a claim that crypto is unpredictable under every model.
+A natural interpretation is limited cross-sectional depth. The eligible point-in-time book is capped at two hundred names, liquid history is concentrated after 2017, and instruments share exchange, quote asset and market-wide shocks. The resulting panel is thinner, shorter and more co-moving than equity universes on which Jiang-style image CNNs were developed. The claim is restricted to fit between this method and this market; it does not assert unpredictability of cryptocurrency returns under arbitrary models.
 
-Full write-up: [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md).
+Extended discussion is in [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md).
 
 ---
 
 ## Repository layout
 
 ```text
-README.md / README.zh-CN.md
-CITATIONS.md · CITATION.cff · NOTICE · LICENSE (Apache-2.0)
+README.md
+README.zh-CN.md
+CITATIONS.md
+CITATION.cff
+NOTICE
+LICENSE
 docs/
-  METHODS.md                  ← Study A (equity representations)
-  INTERPRETATION.md           ← Study A horizon/expand reading
-  METHODS-crypto.md           ← Study B design & split
-  INTERPRETATION-crypto.md    ← Study B scientific reading
+  METHODS.md
+  INTERPRETATION.md
+  METHODS-crypto.md
+  INTERPRETATION-crypto.md
   crypto-protocol.md
-  vwpq-*.md                   ← Study A representation protocols
+  vwpq-clip-oc-protocol.md
+  vwpq-dollar-protocol.md
 configs/
-  protocol_vwpq_*.json        ← Study A
-  crypto_daily_reimaging_v1.yaml · asset_exclusions_v1.json
+  protocol_vwpq_clip_oc.json
+  protocol_vwpq_dollar.json
+  crypto_daily_reimaging_v1.yaml
+  asset_exclusions_v1.json
 results/
-  RESULTS.md · tables/ · json/          ← Study A
-  crypto/RESULTS.md · tables/ · json/   ← Study B
+  RESULTS.md
+  tables/
+  json/
+  crypto/
 src_snapshot/
-  hfdata/                     ← expand/clip transforms (Study A)
-  crypto/                     ← formation, metrics, execution helpers (Study B)
+  hfdata/
+  crypto/
 ```
 
 ---
 
-## Data & code citations (summary)
+## Data and code
 
-| Layer | Source | Redistributed here? |
-|-------|--------|---------------------|
-| Method paper | Jiang, Kelly & Xiu (2023), *JF* | No (cite only) |
-| Equity minutes | HF Data Library US 1m ([Hugging Face](https://huggingface.co/datasets/elkassabgi/hfdatalibrary)) | No |
-| Paper’s equities | CRSP via WRDS | No |
-| Crypto minutes | Binance spot 1m klines (experiment host inventory) | No |
-| This repo | Tables, protocols, small Python snapshots | Yes (Apache-2.0) |
+| Layer | Source | Redistributed |
+|-------|--------|---------------|
+| Method paper | Jiang, Kelly and Xiu (2023), *Journal of Finance* | No |
+| Equity minutes | HF Data Library US one-minute OHLCV | No |
+| Equity paper sample | CRSP via WRDS | No |
+| Crypto minutes | Binance spot one-minute klines on the experiment host | No |
+| This repository | Tables, protocols and pure-Python snapshots | Yes, Apache-2.0 |
 
-Authoritative wording: [CITATIONS.md](CITATIONS.md).
+Full citation wording is in [CITATIONS.md](CITATIONS.md).
 
 ---
 
-## Inference appendix (secondary)
+## Statistical scope
 
-Study A reports a shared bootstrap for the expand arm as a **diagnostic** (see `results/json/final_summary.json`).  
-Study B reports **descriptive** Rank IC / ICIR / proxy Sharpe; it does **not** claim one-sided 5% “all cells positive” confirmation—primary I20/R20 alone rejects that narrative.
-
-Emphasis of this repository remains **signed, setting-level movement** (Study A) and **honest transfer failure + cell map** (Study B).
+Study A reports a shared monthly-block bootstrap for the expand arm as a secondary diagnostic in `results/json/final_summary.json`. Study B reports descriptive Rank IC, ICIR and zero-cost long–short Sharpe. No claim is made that all nine cryptocurrency cells are jointly positive; the primary I20/R20 cell alone rejects that narrative. The repository emphasises signed, setting-level movement in Study A and bounded transfer failure with a descriptive cell map in Study B.

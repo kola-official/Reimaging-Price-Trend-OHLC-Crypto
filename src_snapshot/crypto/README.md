@@ -1,29 +1,25 @@
-# Crypto study — code snapshot
+# Cryptocurrency study code snapshot
 
-Small, pure (or near-pure) helpers vendored from the engineering workspace
-`crypto-reimaging-price-trends`. They document **how** the crypto experiment was
-constructed; they are **not** a full training stack.
+Pure and near-pure helpers vendored from the engineering workspace for Study B. They document construction of the cryptocurrency experiment and are not a complete training stack.
 
 | File | Role |
 |------|------|
-| `formation.py` | Non-overlapping formation grid (`step = R`), purge cut helper, OOS tail guard |
-| `metrics_oos.py` | Rank IC / decile LS proxy used in the 2026-07-24 CUDA audit |
-| `execution.py` | Delayed-entry window, exact hold, no-close-fill, turnover cost primitives |
+| `formation.py` | Non-overlapping formation grid with step equal to horizon \(R\); purge cut; out-of-sample tail guard |
+| `metrics_oos.py` | Rank IC and decile long–short metrics used in the 2026-07-24 evaluation |
+| `execution.py` | Delayed-entry window, exact holding period, no-close-fill rule and turnover cost primitives |
 
-## Not included (by design)
+## Scope
 
-- Full Binance 1-minute archives (~129 GB content-set used on the experiment host)
-- Image binaries, checkpoints, and OOS prediction CSVs
-- Shared author OHLC renderer / CNN classes (live in the equity bootstrap workspace; architecture follows Jiang, Kelly & Xiu, 2023)
+The following artefacts are not included: full Binance one-minute archives, image binaries, checkpoints and out-of-sample prediction files; shared author OHLC renderer and CNN classes, which live in the equity bootstrap workspace and follow Jiang, Kelly and Xiu (2023).
 
-## Host-side layout (experiment machine)
+## Experiment-host layout
 
 ```text
 /share/home/user/snliu/crypto_reimaging_workspace
-  data/crypto/          # daily bars, PIT universe, I×R IS/OOS datasets
-  outputs/is/           # nine cells × five seeds
-  outputs/oos/          # metrics_audit + predictions (audit)
-  scripts/              # builders, audits, verify_oos_inference.py
+  data/crypto/
+  outputs/is/
+  outputs/oos/
+  scripts/
 ```
 
-Compute: 2× NVIDIA GeForce RTX 3090.
+Compute: dual NVIDIA GeForce RTX 3090.

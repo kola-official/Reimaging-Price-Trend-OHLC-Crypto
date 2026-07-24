@@ -1,17 +1,17 @@
-# Methods — Study A: equity OHLC representations
+# Methods for Study A: equity OHLC representations
 
-> **Companion study.** Crypto asset-class transfer methods live in [METHODS-crypto.md](METHODS-crypto.md).
+Methods for Study B are in [METHODS-crypto.md](METHODS-crypto.md).
 
-## Citations (read first)
+## Citations
 
-Authoritative lists of **data**, **code**, and **papers** live in the repository root:
+Authoritative lists of data, code and papers:
 
-- [CITATIONS.md](../CITATIONS.md) — full wording, BibTeX, what is / is not redistributed  
-- [NOTICE](../NOTICE) — third-party attribution under Apache-2.0  
-- [LICENSE](../LICENSE) — **Apache License 2.0**
+- [CITATIONS.md](../CITATIONS.md)
+- [NOTICE](../NOTICE)
+- [LICENSE](../LICENSE)
 
-Primary paper: Jiang, Kelly & Xiu (2023), *Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
-Primary experiment data (Study A): HF Data Library US 1-minute OHLCV ([Hugging Face dataset page](https://huggingface.co/datasets/elkassabgi/hfdatalibrary)); not shipped in this repo.
+Primary paper: Jiang, Kelly and Xiu (2023), *The Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
+Primary experiment data for Study A: HF Data Library US one-minute OHLCV ([Hugging Face](https://huggingface.co/datasets/elkassabgi/hfdatalibrary)); not redistributed in this repository.
 
 ## Daily bar constructions
 
