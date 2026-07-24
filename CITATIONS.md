@@ -3,7 +3,8 @@
 This document records **what we used**, **what we cite**, and **what we do not redistribute**.
 
 **Repository:** [`Reimaging-Price-Trend-OHLC-Crypto`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto)  
-**Studies packaged here:** (A) equity OHLC representation arms; (B) crypto spot asset-class transfer.
+**Studies packaged here:** (A) equity OHLC representation arms; (B) cryptocurrency spot retrain; (C) frozen US raw, expand and clip transfer to cryptocurrency.  
+**Scientific spine:** [`docs/SCIENTIFIC-OVERVIEW.md`](docs/SCIENTIFIC-OVERVIEW.md).
 
 ---
 
@@ -150,11 +151,12 @@ If you use our tables or protocol definitions:
 ```bibtex
 @misc{reimaging_ohlc_crypto_2026,
   title        = {Re-imagining Price-Trend {OHLC} Representations and
-                  Crypto Asset-Class Transfer},
+                  Cryptocurrency Transfer},
   author       = {{Contributors}},
   year         = {2026},
   howpublished = {\url{https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto}},
-  note         = {Equity representation arms + crypto spot retrain audit; Apache-2.0}
+  note         = {Studies A--C: equity representations, crypto retrain,
+                  frozen US transfer; Apache-2.0}
 }
 ```
 

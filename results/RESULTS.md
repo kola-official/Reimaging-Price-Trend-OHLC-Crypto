@@ -1,6 +1,7 @@
 # Results for Study A: equity OHLC representations
 
-Results for Study B are in [crypto/RESULTS.md](crypto/RESULTS.md).
+Scientific overview: [../docs/SCIENTIFIC-OVERVIEW.md](../docs/SCIENTIFIC-OVERVIEW.md).  
+Study B: [crypto/RESULTS.md](crypto/RESULTS.md). Study C: [crypto/transfer/RESULTS.md](crypto/transfer/RESULTS.md).
 
 ## 0. Five-way economic path
 

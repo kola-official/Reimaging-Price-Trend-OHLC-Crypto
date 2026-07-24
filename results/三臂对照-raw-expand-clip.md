@@ -1,3 +1,5 @@
+> 仓库科学总览与三项研究综合论述见 [docs/SCIENTIFIC-OVERVIEW.md](../docs/SCIENTIFIC-OVERVIEW.md)。本文为研究 A 详细结果表。
+
 # 三臂对照：raw vs expand vs clip（含与 expand 相同的 10 bps 经济路径）
 
 生成时间：2026-07-21  

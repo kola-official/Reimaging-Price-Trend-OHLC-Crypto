@@ -1,9 +1,12 @@
 # Methods for Study B: cryptocurrency asset-class transfer
 
+Scientific overview: [SCIENTIFIC-OVERVIEW.md](SCIENTIFIC-OVERVIEW.md).  
+Study A: [METHODS.md](METHODS.md). Study C: [METHODS-us-to-crypto-transfer.md](METHODS-us-to-crypto-transfer.md).
+
 ## Citations
 
 Primary reference: Jiang, Kelly and Xiu (2023), *The Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
-Full register of data and code: [CITATIONS.md](../CITATIONS.md).  
+Full register: [CITATIONS.md](../CITATIONS.md).  
 Machine-readable design: [configs/crypto_daily_reimaging_v1.yaml](../configs/crypto_daily_reimaging_v1.yaml).
 
 This study retains the image, convolutional network and cross-sectional ranking design of Jiang et al. (2023) and changes only the asset class from US equities to single-exchange cryptocurrency spot markets.

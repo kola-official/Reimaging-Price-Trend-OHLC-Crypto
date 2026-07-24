@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this repository, please cite it and the Jiang-Kelly-Xiu (2023) paper."
-title: "Re-imagining Price-Trend OHLC Representations and Crypto Asset-Class Transfer"
+message: "If you use this repository, please cite it and Jiang, Kelly and Xiu (2023)."
+title: "Re-imagining Price-Trend OHLC Representations and Cryptocurrency Transfer"
 type: software
 authors:
   - name: "Contributors to Reimaging-Price-Trend-OHLC-Crypto"
@@ -8,9 +8,12 @@ repository-code: "https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Cr
 license: Apache-2.0
 date-released: "2026-07-24"
 abstract: >
-  Two empirical packages sharing Jiang-Kelly-Xiu (2023) image-CNN design language:
-  (A) US equity daily OHLC representation arms (raw vs volume-/dollar-weighted expand/clip);
-  (B) confirmatory crypto spot retrain on Binance USDT with a nine-cell (I,R) out-of-sample audit.
+  Three empirical studies under the Jiang-Kelly-Xiu (2023) image-CNN design:
+  (A) US equity OHLC representation arms (raw, expand, clip);
+  (B) confirmatory cryptocurrency spot retrain on Binance USDT;
+  (C) frozen US raw/expand/clip transfer to cryptocurrency out-of-sample images.
+  Equity representation choices move portfolio Sharpe; cryptocurrency ranking
+  skill does not recover equity-like performance under retrain or frozen transfer.
 references:
   - type: article
     authors:

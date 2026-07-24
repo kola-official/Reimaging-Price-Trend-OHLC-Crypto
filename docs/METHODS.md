@@ -1,14 +1,11 @@
 # Methods for Study A: equity OHLC representations
 
-Methods for Study B are in [METHODS-crypto.md](METHODS-crypto.md).
+Scientific overview: [SCIENTIFIC-OVERVIEW.md](SCIENTIFIC-OVERVIEW.md).  
+Study B: [METHODS-crypto.md](METHODS-crypto.md). Study C: [METHODS-us-to-crypto-transfer.md](METHODS-us-to-crypto-transfer.md).
 
 ## Citations
 
-Authoritative lists of data, code and papers:
-
-- [CITATIONS.md](../CITATIONS.md)
-- [NOTICE](../NOTICE)
-- [LICENSE](../LICENSE)
+Authoritative lists of data, code and papers: [CITATIONS.md](../CITATIONS.md), [NOTICE](../NOTICE), [LICENSE](../LICENSE).
 
 Primary paper: Jiang, Kelly and Xiu (2023), *The Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
 Primary experiment data for Study A: HF Data Library US one-minute OHLCV ([Hugging Face](https://huggingface.co/datasets/elkassabgi/hfdatalibrary)); not redistributed in this repository.

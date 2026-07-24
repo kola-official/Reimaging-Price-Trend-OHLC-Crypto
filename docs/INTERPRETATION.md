@@ -1,6 +1,7 @@
-# Interpretation of expand effects in Study A
+# Interpretation of Study A: expand effects on equity horizons
 
-Companion note on cryptocurrency transfer: [INTERPRETATION-crypto.md](INTERPRETATION-crypto.md).
+Repository spine: [SCIENTIFIC-OVERVIEW.md](SCIENTIFIC-OVERVIEW.md).  
+Companion notes: cryptocurrency retrain [INTERPRETATION-crypto.md](INTERPRETATION-crypto.md); frozen transfer [INTERPRETATION-us-to-crypto-transfer.md](INTERPRETATION-us-to-crypto-transfer.md).
 
 This note organises the three-arm net-Sharpe pattern into an account of how expand alters image geometry and how that alteration may interact with short versus long forecasting windows. It does not establish causal identification of noise versus signal in the high–low range.
 

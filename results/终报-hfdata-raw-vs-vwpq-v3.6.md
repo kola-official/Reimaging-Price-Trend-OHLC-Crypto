@@ -1,3 +1,5 @@
+> 仓库科学总览与三项研究综合论述见 [docs/SCIENTIFIC-OVERVIEW.md](../docs/SCIENTIFIC-OVERVIEW.md)。本文为研究 A 详细结果表。
+
 # 美国股票「蜡烛图 CNN」实验终报：标准日线高低价 vs 成交量加权分位高低价
 
 | 项目 | 内容 |

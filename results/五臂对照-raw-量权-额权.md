@@ -1,3 +1,5 @@
+> 仓库科学总览与三项研究综合论述见 [docs/SCIENTIFIC-OVERVIEW.md](../docs/SCIENTIFIC-OVERVIEW.md)。本文为研究 A 详细结果表。
+
 # 五臂对照：raw / 量权 expand·clip / 额权 expand·clip
 
 生成：2026-07-21T10:16:25.971171+00:00

@@ -1,5 +1,8 @@
 # Results for Study B: cryptocurrency spot retrain
 
+Scientific overview: [../../docs/SCIENTIFIC-OVERVIEW.md](../../docs/SCIENTIFIC-OVERVIEW.md).  
+Interpretation: [../../docs/INTERPRETATION-crypto.md](../../docs/INTERPRETATION-crypto.md).
+
 **Evaluation date:** 2026-07-24  
 **Compute host:** dual NVIDIA GeForce RTX 3090  
 **Machine-readable source:** [json/crypto_oos_metrics_audit_2026-07-24.json](json/crypto_oos_metrics_audit_2026-07-24.json)  

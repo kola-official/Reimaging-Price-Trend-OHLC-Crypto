@@ -1,5 +1,8 @@
 # Results for Study C: frozen US raw, expand and clip models on cryptocurrency OOS
 
+Scientific overview: [../../../docs/SCIENTIFIC-OVERVIEW.md](../../../docs/SCIENTIFIC-OVERVIEW.md).  
+Interpretation: [../../../docs/INTERPRETATION-us-to-crypto-transfer.md](../../../docs/INTERPRETATION-us-to-crypto-transfer.md).
+
 **Evaluation date:** 2026-07-24  
 **Compute:** dual NVIDIA GeForce RTX 3090  
 **Mode:** direct frozen transfer; no US weight updates; no US normalisation re-fit on cryptocurrency  

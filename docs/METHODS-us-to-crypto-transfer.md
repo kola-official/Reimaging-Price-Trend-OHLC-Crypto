@@ -1,10 +1,13 @@
 # Methods for Study C: frozen US representation arms transferred to cryptocurrency
 
+Scientific overview: [SCIENTIFIC-OVERVIEW.md](SCIENTIFIC-OVERVIEW.md).  
+Study A: [METHODS.md](METHODS.md). Study B: [METHODS-crypto.md](METHODS-crypto.md).
+
 ## Citations
 
 Primary methodological reference: Jiang, Kelly and Xiu (2023), *The Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
-Study A representation arms and equity results: [METHODS.md](METHODS.md), [results/RESULTS.md](../results/RESULTS.md).  
-Study B cryptocurrency retrain: [METHODS-crypto.md](METHODS-crypto.md).  
+Equity representation results: [results/RESULTS.md](../results/RESULTS.md).  
+Cryptocurrency retrain results: [results/crypto/RESULTS.md](../results/crypto/RESULTS.md).  
 Data and code register: [CITATIONS.md](../CITATIONS.md).
 
 This study evaluates zero-shot asset-class transfer. United States equity image-CNN weights trained under Study A representation arms are applied to cryptocurrency out-of-sample images without gradient updates and without re-estimating United States train-only normalisation on cryptocurrency data.
