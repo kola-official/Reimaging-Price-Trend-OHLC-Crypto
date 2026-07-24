@@ -1,0 +1,239 @@
+schema_version: 1
+status: draft_for_freeze
+
+experiment:
+  id: crypto_daily_reimaging_v1
+  title: "Crypto (Re-)Imag(in)ing Price Trends"
+  objective: test_equity_to_crypto_asset_class_generalization
+  task: cross_sectional_binary_direction_classification
+  primary_scientific_change: replace_us_equity_universe_with_crypto_spot_universe
+  prohibit_intraday_model_v1: true
+  prohibit_spot_perp_mixed_training: true
+
+market:
+  primary_exchange: binance
+  primary_market_type: spot
+  quote_asset: USDT
+  exchange_decision_status: selected_after_preliminary_inventory_pending_formal_freeze
+  timezone: UTC
+  day_interval: "[00:00:00,24:00:00)"
+  perpetuals_in_primary: false
+
+data_source:
+  remote_root: /share/home/user/snliu/crypto_klines/binance_spot_1m
+  preliminary_inventory_manifest: data/manifests/binance_spot_state_precheck_2026-07-23.json
+  preliminary_inventory_sha256: 49be3b8738dc5d6f50c7fc89c631208d823b6fe068d64b4740ab34520530b441
+  preliminary_symbols_with_positive_data: 625
+  preliminary_range: [2017-08, 2026-06]
+  content_snapshot_manifest: data/crypto/raw_manifest/raw_manifest.json
+  content_snapshot_manifest_sha256: 855459ade2598b08c2577eb0ceee4ec34d3d9ca8f83dece33a9077c69f2fcd90
+  content_snapshot_set_sha256: bdf6acc40923fce7ee07012487c4256837b2a1819a83029a225c93fc5c3fc558
+  content_snapshot_files: 23674
+  content_snapshot_bytes: 128912457621
+  formal_data_freeze_complete: false
+
+sample:
+  audit_end: 2017-12-31
+  in_sample_start: 2018-01-01
+  in_sample_end: 2021-12-31
+  oos_start: 2022-01-01
+  oos_end: 2025-12-31
+  exclude_years: [2026]
+  oos_boundary_must_not_move_after_model_results: true
+
+universe:
+  point_in_time_required: true
+  minimum_listing_age_days: 120
+  valid_days_required_last_30: 27
+  lagged_liquidity_window_days: 30
+  minimum_median_quote_volume_usdt: 1000000
+  maximum_names_after_filter: 200
+  minimum_names_for_deciles: 50
+  primary_cross_section: broad_eligible_top200
+  robustness_cross_sections: [top100, top50, exclude_bottom_adv_quintile]
+  exclude:
+    - stablecoin_base_assets
+    - fiat_proxy_assets
+    - leveraged_tokens
+    - index_or_etf_tokens
+    - tokenized_securities
+    - duplicate_wrapped_assets_without_canonical_mapping
+    - unresolved_redenominations_or_ticker_reuse
+  current_survivor_list_backfill_forbidden: true
+
+aggregation:
+  source_frequency: 1m
+  model_frequency: 1d
+  one_minute_role: [daily_aggregation, coverage_audit, delayed_execution_vwap]
+  minimum_minute_coverage_fraction: 0.95
+  missing_day_fill: none
+  primary_image_volume: base_volume
+  volume_ablations: [quote_volume, no_volume]
+
+images:
+  windows_I: [5, 20, 60]
+  horizons_R: [5, 20, 60]
+  full_grid: true
+  chart_type: ohlc_bar
+  pixels_per_day: 3
+  colors: grayscale_black_background_white_objects
+  moving_average_equal_to_I: true
+  volume_panel_fraction: 0.20
+  price_normalization: first_valid_close_equals_one_return_reconstruction
+  within_window_vertical_minmax_only: true
+  shapes:
+    5: [1, 32, 15]
+    20: [1, 64, 60]
+    60: [1, 96, 180]
+  raw_input_span_days_formula: "2*I-1"
+  primary_renderer: price-trends-bootstrap/src/integration/author_ohlc_renderer.py::draw_author_chart
+  exact_author_parity_required_for_all_I: true
+  missing_coverage_slots: blank_columns_no_interpolation
+  legacy_generic_renderer_for_formal_crypto_forbidden: true
+  i5_i20_i60_exact_author_parity_complete: true
+
+labels:
+  primary: close_to_close_return_sign
+  formula: "C[t+R] / C[t] - 1"
+  positive_rule: future_return_gt_zero
+  invalid_or_nonfinite_policy: drop_and_audit
+  listing_or_delisting_inside_label_window: drop
+  drop_is_rows_if_label_crosses_oos_start: true
+  drop_oos_rows_if_label_or_execution_crosses_oos_end: true
+
+formation:
+  paper_compatible:
+    frequency_days_equals_R: true
+    anchor_utc_date: 2018-01-01
+    non_overlapping: true
+  robustness:
+    enumerate_all_R_offsets: true
+    daily_overlapping_cohorts: true
+    equal_capital_across_active_cohorts: true
+
+protocols:
+  primary: purged_fixed
+  paper_compat_fixed:
+    train_validation_method: seeded_random_70_30_within_is
+    retraining_policy: fixed_model_all_oos
+  purged_fixed:
+    train_period: [2018-01-01, 2020-12-31]
+    validation_period: [2021-01-01, 2021-12-31]
+    purge_rule: "val_idx > train_max_idx + R + (2*I-2)"
+    normalization_scope: final_training_rows_only
+    retraining_policy: fixed_model_all_oos
+  rolling_retrain_v1: false
+
+model:
+  family: author_style_cnn_2d
+  blocks_by_I: {5: 2, 20: 3, 60: 4}
+  channels: [64, 128, 256, 512]
+  kernel: [5, 3]
+  first_layer_vertical_stride_by_I: {5: 1, 20: 3, 60: 3}
+  first_layer_vertical_dilation_by_I: {5: 1, 20: 2, 60: 3}
+  max_pool: [2, 1]
+  batch_norm: true
+  activation: leaky_relu
+  dropout_probability: 0.50
+  output_classes: 2
+
+training:
+  optimizer: adam
+  learning_rate: 0.00001
+  batch_size: 128
+  max_epochs: 50
+  early_stopping_patience_epochs: 2
+  checkpoint_selection: minimum_validation_loss
+  ensemble_seeds: [0, 1, 2, 3, 4]
+  oos_probability_aggregation: arithmetic_mean
+  oos_hyperparameter_tuning_forbidden: true
+  primary_class_weighting: none
+  report_fold_class_balance: true
+  imbalance_sensitivity_trigger_positive_fraction_outside: [0.40, 0.60]
+  imbalance_sensitivity: inverse_frequency_class_weight
+  primary_sample_weighting: equal_per_image
+  cross_section_growth_sensitivity: equal_total_loss_weight_per_formation_date
+
+transfer:
+  source_asset_class: us_equities
+  source_representation: raw_ohlc_ma_volume
+  checkpoint_manifest_required: true
+  exact_matching_I_R_required: true
+  direct:
+    weights_frozen: true
+    batchnorm_state_frozen: true
+    source_normalization_reused: true
+    crypto_probability_recalibration: false
+  fine_tune:
+    status: secondary
+    required_units: [[5, 5], [20, 20], [60, 60]]
+    initialize_from_us_checkpoint: true
+    learning_rate: 0.000001
+
+baselines:
+  paper_style: [WSTR_5d_reversal, STR_20d_reversal, MOM_250_skip20, TREND_verified_implementation]
+  representation: [past_I_return, logistic_small_features, numeric_1d_cnn_or_mlp]
+  same_keys_returns_costs_required: true
+  long_history_baselines_use_common_support_subset: true
+
+evaluation:
+  primary_prediction_metric: cross_sectional_spearman_rank_ic
+  prediction_metrics: [mean_rank_ic, icir, positive_ic_fraction, log_loss, accuracy, balanced_accuracy, mcc, roc_auc, brier]
+  portfolio_quantiles: 10
+  weights: [equal, lagged_adv30_capped_10pct]
+  optional_weight: point_in_time_market_cap
+  legs: [high, low, high_minus_low, high_minus_eligible_market]
+  spot_high_minus_low_is_factor_not_automatically_executable: true
+  factor_spread_weights: {high: 1.0, low: -1.0}
+  gross1_execution_weights: {high: 0.5, low: -0.5}
+  long_only_high_weight: 1.0
+  deterministic_decile_tiebreaker: instrument_id
+  annualization_days: 365
+
+execution:
+  paper_idealized:
+    price: close_to_close
+    one_way_cost_bps: 0
+  primary_realistic:
+    price: next_utc_day_vwap
+    entry_window_utc: "00:05-00:10"
+    entry_date_formula: "t+1"
+    exit_date_formula: "t+R+1"
+    exact_holding_hours_formula: "R*24"
+    one_way_cost_bps: 10
+  delay_sensitivity_minutes: [1, 15, 30]
+  cost_sensitivity_bps_one_way: [0, 5, 10, 20]
+  missing_or_zero_volume_execution_window: not_tradable_no_close_fill
+  cost_application: absolute_traded_notional_on_entry_rebalance_and_exit
+
+inference:
+  global_test_before_cell_tests: true
+  multiple_testing: holm
+  overlapping_returns: moving_block_bootstrap_or_hac
+  minimum_block_length_days_formula: "max(R,60)"
+  sharpe_difference_recomputed_per_bootstrap: true
+  report_seed_dispersion: true
+  R60_low_power_warning_required: true
+
+efficiency_logging:
+  fields: [training_rows, parameters, epochs, wall_clock_seconds, peak_gpu_memory_mb, images_per_second, inference_rows_per_second, checkpoint_bytes]
+
+outputs:
+  instrument_master: data/crypto/instrument_master.parquet
+  daily_bars: data/crypto/daily/bars_1d.parquet
+  universe: data/crypto/universe_daily.parquet
+  image_manifest: data/crypto/images/image_manifest.parquet
+  labels: data/crypto/labels.parquet
+  predictions: outputs/crypto/predictions.parquet
+  portfolios: outputs/crypto/portfolio_returns.parquet
+  report: outputs/crypto/REPORT.md
+
+freeze:
+  required_before_formal_training:
+    - primary_exchange_manifest_hash
+    - raw_data_manifest_hash
+    - instrument_master_hash
+    - config_sha256
+    - us_stock_checkpoint_manifest_and_hashes
+    - image_parity_test_report
+    - leakage_test_report

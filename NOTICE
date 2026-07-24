@@ -1,4 +1,4 @@
-Reimaging-Price-Trend-OHLC-reasearch
+Reimaging-Price-Trend-OHLC-Crypto
 Copyright 2026 Contributors
 
 This product is licensed under the Apache License, Version 2.0.
@@ -15,9 +15,11 @@ Third-party data and software (not redistributed in full in this repository)
    are NOT redistributed here.
 
 2. Market data used in the underlying experiments
-   - Primary minute bars: HF Data Library (US OHLCV), e.g. Hugging Face dataset
-     “elkassabgi/hfdatalibrary” and related vendor feeds (e.g. pitrading noted in
-     local provenance). Users must obtain data under the dataset/vendor terms.
+   - Study A minute bars: HF Data Library (US OHLCV), e.g. Hugging Face dataset
+     “elkassabgi/hfdatalibrary” and related vendor feeds. Users must obtain data
+     under the dataset/vendor terms.
+   - Study B minute bars: Binance USDT spot klines (experiment-host inventory).
+     Users must obtain data under Binance terms. Not redistributed here.
    - The original Jiang–Kelly–Xiu study uses CRSP daily equity data (not redistributed).
    CRSP is a product of the Center for Research in Security Prices, University of Chicago.
 
@@ -26,6 +28,7 @@ Third-party data and software (not redistributed in full in this repository)
    - https://github.com/lich99/Stock_CNN
    Those repositories retain their own licenses. Review them before reuse.
 
-This repository ships experimental reports, tables, protocol freezes, and a
-small pure-Python snapshot of bar transforms. It does not ship CRSP data,
-full 1-minute archives, official paper image packs, or third-party model weights.
+This repository ships experimental reports, tables, protocol freezes, and small
+pure-Python snapshots (equity bar transforms; crypto formation/metrics/execution
+helpers). It does not ship CRSP data, full 1-minute archives, image tensors,
+checkpoints, official paper image packs, or third-party model weights.

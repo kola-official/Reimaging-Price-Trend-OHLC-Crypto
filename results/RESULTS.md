@@ -1,4 +1,6 @@
-# Results tables
+# Results tables — Study A (equity representations)
+
+> **Study B (crypto)** tables: [crypto/RESULTS.md](crypto/RESULTS.md).
 
 ## 0. Five-way economic path (latest — primary)
 

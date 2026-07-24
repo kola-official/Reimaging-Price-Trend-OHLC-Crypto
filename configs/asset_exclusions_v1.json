@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "status": "draft_minimal_classification",
+  "quote_asset": "USDT",
+  "stablecoin_or_fiat_bases": [
+    "AEUR", "AUD", "BIDR", "BKRW", "BRL", "BUSD", "DAI", "EUR",
+    "EURI", "FDUSD", "FRAX", "GBP", "IDRT", "PAX", "RUB",
+    "TUSD", "UAH", "USDC", "USDP", "USDS", "USDT", "UST", "USTC",
+    "VAI", "XUSD"
+  ],
+  "non_crypto_backed_asset_bases": ["PAXG"],
+  "leveraged_base_suffixes": ["UP", "DOWN", "BULL", "BEAR"],
+  "wrapped_or_staked_derivative_bases": ["BETH", "BTCB", "WBETH", "WBTC"],
+  "explicit_excluded_symbols": [],
+  "notes": [
+    "This is a minimum engineering list, not a final economic-identity taxonomy.",
+    "PAXG is conservatively excluded from the crypto-token cross-section because it is gold-backed.",
+    "Formal D0 must review every included symbol and known redenomination/ticker-reuse event."
+  ]
+}

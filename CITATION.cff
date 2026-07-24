@@ -1,16 +1,16 @@
 cff-version: 1.2.0
 message: "If you use this repository, please cite it and the Jiang-Kelly-Xiu (2023) paper."
-title: "Re-imagining Price-Trend OHLC Representations (raw vs expand vs clip)"
+title: "Re-imagining Price-Trend OHLC Representations and Crypto Asset-Class Transfer"
 type: software
 authors:
-  - name: "Contributors to Reimaging-Price-Trend-OHLC-reasearch"
-repository-code: "https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch"
+  - name: "Contributors to Reimaging-Price-Trend-OHLC-Crypto"
+repository-code: "https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto"
 license: Apache-2.0
-date-released: "2026-07-21"
+date-released: "2026-07-24"
 abstract: >
-  Empirical comparison of standard daily OHLC bars against volume-weighted
-  high-low constructions (expand-not-clip and clip-open-close) for image-based
-  CNN equity trend signals on hfdata 1-minute US equities.
+  Two empirical packages sharing Jiang-Kelly-Xiu (2023) image-CNN design language:
+  (A) US equity daily OHLC representation arms (raw vs volume-/dollar-weighted expand/clip);
+  (B) confirmatory crypto spot retrain on Binance USDT with a nine-cell (I,R) out-of-sample audit.
 references:
   - type: article
     authors:

@@ -2,6 +2,9 @@
 
 This document records **what we used**, **what we cite**, and **what we do not redistribute**.
 
+**Repository:** [`Reimaging-Price-Trend-OHLC-Crypto`](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto)  
+**Studies packaged here:** (A) equity OHLC representation arms; (B) crypto spot asset-class transfer.
+
 ---
 
 ## 1. Primary literature
@@ -18,7 +21,7 @@ The image-based CNN price-trend setting follows the design language of:
 > **SSRN preprint (optional):** [https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3756587](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3756587)
 
 **How we use it.**  
-We adopt the broad agenda of representing equity history as OHLC(+MA/volume) images and learning CNN forecasts of forward returns. We do **not** claim numerical reproduction of the paper’s CRSP-based Accuracy / Rank IC / Sharpe figures.
+We adopt the broad agenda of representing price history as OHLC(+MA/volume) images and learning CNN forecasts of forward returns. **Study A** varies equity bar geometry; **Study B** holds the image recipe fixed and changes the universe to crypto spot. We do **not** claim numerical reproduction of the paper’s CRSP-based Accuracy / Rank IC / Sharpe figures.
 
 **BibTeX**
 
@@ -76,12 +79,29 @@ Minute bars and full image tensors are **not** uploaded to this GitHub repositor
 | **Identifiers** | CRSP **PERMNO** (not tickers) |
 | **Access** | Via WRDS / CRSP subscription; **not redistributed here** |
 
-### 2.3 What we derive from raw minutes
+### 2.3 What we derive from raw minutes (Study A)
 
 1. **raw** daily OHLCV (session RTH aggregation).  
 2. **expand** daily bars: O/C/V = raw; H/L = volume-weighted quantiles expanded to cover O/C.  
 3. **clip** daily bars: H/L = quantile band; O/C clipped into `[L, H]`.  
 4. Greyscale OHLC+MA images; labels and portfolio fills from **raw** prices.
+
+### 2.4 Data used in **Study B** (crypto spot)
+
+| Item | Detail |
+|------|--------|
+| **Market** | Binance **USDT spot** only (perpetual futures excluded from v1) |
+| **Local compute path (experiment host)** | `/share/home/user/snliu/crypto_klines/binance_spot_1m` |
+| **Engineering workspace** | `/share/home/user/snliu/crypto_reimaging_workspace` |
+| **Coverage (study design)** | UTC daily bars; **IS 2018–2021**, **OOS 2022–2025**; 2026 excluded |
+| **Content snapshot (host)** | 23,674 files / ~128.9 GB; content-set SHA-256 `bdf6acc40923fce7ee07012487c4256837b2a1819a83029a225c93fc5c3fc558` |
+| **Public access** | Users must obtain Binance historical klines under **Binance’s** terms; this repository does **not** redistribute kline archives |
+
+**What we derive (crypto).**  
+UTC daily OHLC from 1m bars; point-in-time liquidity universe; greyscale author-exact OHLC+MA images; close-to-close \(R\)-day labels; optional delayed-VWAP execution primitives (not the headline economic freeze of the 2026-07-24 audit table).
+
+**Identity.**  
+Seven redenomination / ticker-reuse events are handled by **splitting series at the break** (formal freeze v1); we do not silently rescale OHLC across identity changes.
 
 ---
 
@@ -91,9 +111,9 @@ Minute bars and full image tensors are **not** uploaded to this GitHub repositor
 
 | Item | Detail |
 |------|--------|
-| **GitHub** | [https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch) |
-| **Contents** | Result tables/JSON, method notes, protocol freeze, small pure-Python bar transforms |
-| **Local engineering workspace (not this remote)** | `price-trends-bootstrap` and RTX3090 `price_trends_workspace` hold full training I/O |
+| **GitHub** | [https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto) |
+| **Contents** | Study A/B result tables/JSON, method & interpretation notes, protocol freezes, small pure-Python snapshots |
+| **Local engineering workspaces (not this remote)** | Equity: `price-trends-bootstrap` / RTX3090 `price_trends_workspace`. Crypto: `crypto-reimaging-price-trends` / RTX3090 `crypto_reimaging_workspace` |
 
 ### 3.2 External open-source code we reference
 
@@ -127,13 +147,13 @@ Those repositories keep **their own** licences. Our Apache-2.0 licence covers **
 If you use our tables or protocol definitions:
 
 ```bibtex
-@misc{reimaging_ohlc_research_2026,
-  title        = {Re-imagining Price-Trend {OHLC} Representations:
-                  Raw vs Volume-Weighted Expand vs Clip},
+@misc{reimaging_ohlc_crypto_2026,
+  title        = {Re-imagining Price-Trend {OHLC} Representations and
+                  Crypto Asset-Class Transfer},
   author       = {{Contributors}},
   year         = {2026},
-  howpublished = {\url{https://github.com/kola-official/Reimaging-Price-Trend-OHLC-reasearch}},
-  note         = {Empirical results and protocol freezes; Apache-2.0}
+  howpublished = {\url{https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto}},
+  note         = {Equity representation arms + crypto spot retrain audit; Apache-2.0}
 }
 ```
 

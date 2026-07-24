@@ -1,4 +1,6 @@
-# Methods
+# Methods — Study A: equity OHLC representations
+
+> **Companion study.** Crypto asset-class transfer methods live in [METHODS-crypto.md](METHODS-crypto.md).
 
 ## Citations (read first)
 
@@ -9,7 +11,7 @@ Authoritative lists of **data**, **code**, and **papers** live in the repository
 - [LICENSE](../LICENSE) — **Apache License 2.0**
 
 Primary paper: Jiang, Kelly & Xiu (2023), *Journal of Finance*, [doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268).  
-Primary experiment data: HF Data Library US 1-minute OHLCV ([Hugging Face dataset page](https://huggingface.co/datasets/elkassabgi/hfdatalibrary)); not shipped in this repo.
+Primary experiment data (Study A): HF Data Library US 1-minute OHLCV ([Hugging Face dataset page](https://huggingface.co/datasets/elkassabgi/hfdatalibrary)); not shipped in this repo.
 
 ## Daily bar constructions
 
