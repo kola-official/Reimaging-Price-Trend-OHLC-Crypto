@@ -7,6 +7,9 @@ Pure and near-pure helpers vendored from the engineering workspace for Study B. 
 | `formation.py` | Non-overlapping formation grid with step equal to horizon \(R\); purge cut; out-of-sample tail guard |
 | `metrics_oos.py` | Rank IC and decile long–short metrics used in the 2026-07-24 evaluation |
 | `execution.py` | Delayed-entry window, exact holding period, no-close-fill rule and turnover cost primitives |
+| `transfer_metrics.py` | Pure Rank IC helpers and freeze-schema checks for US→crypto transfer |
+| `transfer_us_arms_to_crypto_frozen.py` | Frozen US raw/expand/clip scoring entry point |
+| `test_us_to_crypto_transfer_freeze.py` | Freeze invariant tests |
 
 ## Scope
 

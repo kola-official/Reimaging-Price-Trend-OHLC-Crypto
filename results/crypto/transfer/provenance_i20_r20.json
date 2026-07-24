@@ -1,0 +1,73 @@
+{
+  "us_checkpoint_root": "/share/home/user/snliu/price_trends_workspace/outputs/hfdata/purged_primary",
+  "crypto_workspace": "/share/home/user/snliu/crypto_reimaging_workspace",
+  "shared_model_root": "/share/home/user/snliu/price_trends_workspace",
+  "transfer_mode": "direct_frozen_us_weights",
+  "retrain": false,
+  "fine_tune": false,
+  "arms": [
+    {
+      "arm": "raw",
+      "cell": "i20_r20",
+      "us_cell_dir": "/share/home/user/snliu/price_trends_workspace/outputs/hfdata/purged_primary/raw/i20_r20",
+      "crypto_dataset_manifest_sha256": "37fed4ac6729751b670ed9b61a5e18a993ac59219fe59579734d90fb42e299bd",
+      "crypto_images_sha256": "22c183ce06b23257a32e258a6c1e1012d232d0728905e03c8f66a31834d7e910",
+      "checkpoint_sha256s": [
+        "bafd683ff3f91090849dc78a9ca237a4d2aca3d5bea76558df37967e9e3a5ad0",
+        "54f7ebd251722f8dd1bc50f9918c25d31c54fbb7dc735973c26a23e0ad75869f",
+        "8a5027054fcbbd7f2829ef452dd1bbf9a8ac91b797e2b227ed9751992574ed08",
+        "e10ea7a845424790d366bfd1c7e61248c350d4c1f4ad95c49f2c99cc557fa7dd",
+        "8ce1c20368e702876406cde0efe28ce5f050a7ab77af3dc5708587d9cf17fef7"
+      ],
+      "us_means": [
+        0.12922544126157406,
+        0.12922544126157406,
+        0.12922544126157406,
+        0.12922544126157406,
+        0.12922544126157406
+      ]
+    },
+    {
+      "arm": "expand",
+      "cell": "i20_r20",
+      "us_cell_dir": "/share/home/user/snliu/price_trends_workspace/outputs/hfdata/purged_primary/vwpq/i20_r20",
+      "crypto_dataset_manifest_sha256": "37fed4ac6729751b670ed9b61a5e18a993ac59219fe59579734d90fb42e299bd",
+      "crypto_images_sha256": "22c183ce06b23257a32e258a6c1e1012d232d0728905e03c8f66a31834d7e910",
+      "checkpoint_sha256s": [
+        "8cc697d07919c9df0e670725617b4a9dcf6575110d654bcdbeaefe27924eb87c",
+        "d974cb37765b92836eb73308fe253113f7a692d70601617b6e047a8f38c46653",
+        "dbbaf62db18c63c922e4371f299cb045374e589e518780bd3156b233d9f40d53",
+        "8948af8cecdd690d90a736c537969f2b67fbc50ca1c613e3862015b3a660763c",
+        "c06d8c631628ab634ae71e30dfa4f1ee951771d19f58df4cd072c51c6fe608e7"
+      ],
+      "us_means": [
+        0.1253291377314815,
+        0.1253291377314815,
+        0.1253291377314815,
+        0.1253291377314815,
+        0.1253291377314815
+      ]
+    },
+    {
+      "arm": "clip",
+      "cell": "i20_r20",
+      "us_cell_dir": "/share/home/user/snliu/price_trends_workspace/outputs/hfdata/purged_primary/vwpq_clip/i20_r20",
+      "crypto_dataset_manifest_sha256": "37fed4ac6729751b670ed9b61a5e18a993ac59219fe59579734d90fb42e299bd",
+      "crypto_images_sha256": "22c183ce06b23257a32e258a6c1e1012d232d0728905e03c8f66a31834d7e910",
+      "checkpoint_sha256s": [
+        "765690d676dd76fd59d0b8656e57c697f91da18cd0a7b72b1b37dfbe3656d95f",
+        "6d22a2e463d7a18fc20c8b90ad29a7ab0867106cdcb1ef1cb766d6b4abf159dd",
+        "4333ea0f610180af48d3f2af0a18079638fa9f4630f77d5640f36ac776d16a76",
+        "eabf650289f78ba97844f1ac66b3a0ebf041eebac6508a32f31065f3a1aee60b",
+        "bd0043fa5ba217cf43770f88871abb767433062bac18aff62f59eb0e87ef6550"
+      ],
+      "us_means": [
+        0.12302517361111111,
+        0.12302517361111111,
+        0.12302517361111111,
+        0.12302517361111111,
+        0.12302517361111111
+      ]
+    }
+  ]
+}

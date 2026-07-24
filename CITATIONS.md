@@ -114,6 +114,7 @@ Seven redenomination / ticker-reuse events are handled by **splitting series at 
 | **GitHub** | [https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto) |
 | **Contents** | Study A/B result tables/JSON, method & interpretation notes, protocol freezes, small pure-Python snapshots |
 | **Local engineering workspaces (not this remote)** | Equity: `price-trends-bootstrap` / RTX3090 `price_trends_workspace`. Crypto: `crypto-reimaging-price-trends` / RTX3090 `crypto_reimaging_workspace` |
+| **Study C transfer checkpoints** | Host path `price_trends_workspace/outputs/hfdata/purged_primary/{raw,vwpq,vwpq_clip}` scored on crypto OOS images; metrics under `results/crypto/transfer/` |
 
 ### 3.2 External open-source code we reference
 

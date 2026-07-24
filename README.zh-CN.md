@@ -10,6 +10,7 @@
 |------|----------|----------|
 | A. 美股 OHLC 表示 | raw、量权与额权 expand/clip 下的日线几何 | 表示选择是否改变样本外组合表现 |
 | B. 加密资产类别迁移 | Binance USDT 现货与本地重训 | 同一日频图像设定在股票之外是否仍具横截面排序能力 |
+| C. 冻结美股表示迁移 | 美股 raw / expand / clip 权重直接用于加密 OOS 图像 | 股权重在不重训时是否可迁移 |
 
 ---
 
@@ -26,6 +27,12 @@
 同一网格 \(I,R\in\{5,20,60\}\) 在 Binance USDT 现货上重训，样本内 2018–2021 年，样本外 2022–2025 年。主对照格 I20/R20 的 Rank IC 为 −0.0495，AUC 为 0.450。对二十日预测，I60/R20 的 Rank IC 为 0.032，并在矩阵中取得最强的零成本多空夏普代理，但仍明显低于相关美股复现中约 0.05 的 Rank IC 量级。该模式与横截面偏薄、历史偏短且共动偏强的加密现货结构相一致，难以支撑与股票相当的视觉趋势提取。
 
 文档见 [docs/METHODS-crypto.md](docs/METHODS-crypto.md)、[docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md)、[results/crypto/RESULTS.md](results/crypto/RESULTS.md)。
+
+### 研究 C. 冻结的美股 raw / expand / clip 迁移
+
+冻结的美股 raw、expand 与 clip 权重在无梯度更新条件下对加密 OOS 图像打分。I20/R20 上三臂 Rank IC 均为负，且均未优于同格加密本地重训。
+
+文档见 [docs/METHODS-us-to-crypto-transfer.md](docs/METHODS-us-to-crypto-transfer.md)、[results/crypto/transfer/RESULTS.md](results/crypto/transfer/RESULTS.md)。
 
 ---
 
@@ -84,6 +91,22 @@
 合理的解释是横截面深度不足。点时点合格标的上限为 200，流动性历史主要集中于 2017 年之后，且标的共享交易所、报价资产与全市场冲击，面板因而比 Jiang 风格图像 CNN 所依赖的股票宇宙更薄、更短、共动更强。该判断限于本方法与本市场的匹配关系，并不主张任意模型下加密收益均不可预测。
 
 展开论述见 [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md)。
+
+---
+
+## 研究 C. 冻结的美股 raw / expand / clip 迁移至加密货币
+
+在不更新美股权重、不在加密数据上重估美股训练集归一化的条件下，将 `purged_primary` 的 raw、expand 与 clip 检查点直接对加密样本外图像打分。expand 与 clip 权重作用于 raw 加密图像，并标记为跨表示迁移。
+
+### 主对照格 I20/R20 Rank IC
+
+| 臂 | Rank IC | ICIR | AUC | 行数 |
+|----|--------:|-----:|----:|-----:|
+| raw | −0.051 | −0.494 | 0.478 | 13852 |
+| expand | −0.041 | −0.383 | 0.482 | 13852 |
+| clip | −0.051 | −0.494 | 0.473 | 13852 |
+
+同格加密本地重训 Rank IC 为 −0.0495。冻结迁移未能扭转主格失败。全表与出处见 [results/crypto/transfer/RESULTS.md](results/crypto/transfer/RESULTS.md)。方法见 [docs/METHODS-us-to-crypto-transfer.md](docs/METHODS-us-to-crypto-transfer.md)。解读见 [docs/INTERPRETATION-us-to-crypto-transfer.md](docs/INTERPRETATION-us-to-crypto-transfer.md)。
 
 ---
 

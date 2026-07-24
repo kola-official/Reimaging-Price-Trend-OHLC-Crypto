@@ -10,6 +10,7 @@ This repository reports two empirical studies that share the image-based convolu
 |-------|--------------------|-------------------|
 | A. Equity OHLC representations | Daily bar geometry under raw, share-volume and dollar-volume expand and clip rules | Whether representation choices alter out-of-sample equity portfolio performance |
 | B. Crypto asset-class transfer | Binance USDT spot cross-section with local retrain | Whether the same daily image specification retains cross-sectional ranking skill outside equities |
+| C. Frozen US representation transfer | US raw, expand and clip weights applied to crypto OOS images | Whether equity-trained representation models transfer without retrain |
 
 ---
 
@@ -26,6 +27,12 @@ Documentation: [docs/METHODS.md](docs/METHODS.md), [docs/INTERPRETATION.md](docs
 The same grid \(I,R\in\{5,20,60\}\) is retrained on Binance USDT spot with in-sample years 2018–2021 and out-of-sample years 2022–2025. The primary cell I20/R20 yields Rank IC of −0.0495 and AUC of 0.450. For twenty-day horizons, I60/R20 attains Rank IC of 0.032 and the strongest zero-cost long–short Sharpe proxy in the matrix, yet remains well below equity-scale Rank IC levels near 0.05 in related US replications. The pattern is consistent with a shallow, short and highly co-moving cryptocurrency cross-section that does not support equity-like visual trend extraction.
 
 Documentation: [docs/METHODS-crypto.md](docs/METHODS-crypto.md), [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md), [results/crypto/RESULTS.md](results/crypto/RESULTS.md).
+
+### Study C. Frozen US raw, expand and clip transfer
+
+Frozen US equity weights for raw, expand and clip score cryptocurrency OOS images with no gradient updates. On I20/R20 all three arms yield negative Rank IC, and none improves on cryptocurrency-local retrain failure at the same cell.
+
+Documentation: [docs/METHODS-us-to-crypto-transfer.md](docs/METHODS-us-to-crypto-transfer.md), [results/crypto/transfer/RESULTS.md](results/crypto/transfer/RESULTS.md).
 
 ---
 
@@ -93,6 +100,22 @@ Even the strongest cryptocurrency cells remain weaker than equity benchmarks. Re
 A natural interpretation is limited cross-sectional depth. The eligible point-in-time book is capped at two hundred names, liquid history is concentrated after 2017, and instruments share exchange, quote asset and market-wide shocks. The resulting panel is thinner, shorter and more co-moving than equity universes on which Jiang-style image CNNs were developed. The claim is restricted to fit between this method and this market; it does not assert unpredictability of cryptocurrency returns under arbitrary models.
 
 Extended discussion is in [docs/INTERPRETATION-crypto.md](docs/INTERPRETATION-crypto.md).
+
+---
+
+## Study C. Frozen US raw, expand and clip transfer to cryptocurrency
+
+United States equity checkpoints from the `purged_primary` raw, expand and clip arms score cryptocurrency out-of-sample images without gradient updates and without re-fitting United States train-only normalisation on cryptocurrency data. Expand and clip weights are applied to raw cryptocurrency images and are labeled as cross-representation transfer.
+
+### Primary cell I20/R20 Rank IC
+
+| Arm | Rank IC | ICIR | AUC | Rows |
+|-----|--------:|-----:|----:|-----:|
+| raw | −0.051 | −0.494 | 0.478 | 13852 |
+| expand | −0.041 | −0.383 | 0.482 | 13852 |
+| clip | −0.051 | −0.494 | 0.473 | 13852 |
+
+Cryptocurrency-local retrain on the same cell records Rank IC of −0.0495. Frozen transfer does not reverse the primary-cell failure. Full tables and provenance: [results/crypto/transfer/RESULTS.md](results/crypto/transfer/RESULTS.md). Methods: [docs/METHODS-us-to-crypto-transfer.md](docs/METHODS-us-to-crypto-transfer.md). Interpretation: [docs/INTERPRETATION-us-to-crypto-transfer.md](docs/INTERPRETATION-us-to-crypto-transfer.md).
 
 ---
 

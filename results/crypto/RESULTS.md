@@ -78,3 +78,10 @@ results/crypto/
   tables/crypto_nine_cell_oos.csv
   json/crypto_oos_metrics_audit_2026-07-24.json
 ```
+
+
+---
+
+## Related Study C: frozen US transfer
+
+Zero-shot application of US raw, expand and clip checkpoints to the same cryptocurrency OOS keys is reported in [transfer/RESULTS.md](transfer/RESULTS.md). On I20/R20 all three transferred arms have negative Rank IC and do not improve upon the cryptocurrency-local retrain Rank IC of −0.0495.
