@@ -80,14 +80,21 @@ def leg_open_open_return(
     side: str,
     cost_bps: float,
 ) -> float:
-    """One-leg net return with one-way cost on entry and exit notional."""
+    """One-leg net return with one-way cost on entry and exit notional.
+
+    Short-leg convention: return on entry notional, ``-(exit/entry - 1)``.
+    (A previous revision used ``entry/exit - 1``, which is convex in the price
+    move and by AM-GM never smaller than the standard convention — it
+    systematically overstated short-leg profits and understated short-leg
+    losses, inflating H-L returns. Fixed 2026-07; see docs/ERRATA.md.)
+    """
     if entry_open <= 0 or exit_price <= 0 or not np.isfinite(entry_open) or not np.isfinite(exit_price):
         return float("nan")
     c = cost_bps * 1e-4
     if side == "long":
         gross = exit_price / entry_open - 1.0
     elif side == "short":
-        gross = entry_open / exit_price - 1.0
+        gross = -(exit_price / entry_open - 1.0)
     else:
         raise ValueError(side)
     # two one-way costs (entry + exit) on unit notional
@@ -140,29 +147,30 @@ def decile_hl_masks(scores: np.ndarray, min_cross: int = 100) -> tuple[np.ndarra
     return high, low
 
 
-def event_driven_hl_daily_returns(
+def event_driven_hl_cohort_returns(
     *,
     formation_rows: Sequence[dict],
     open_px: Mapping[tuple[str, int], float],
     close_px: Mapping[tuple[str, int], float],
-    session_idx_list: Sequence[int],
     horizon_R: int,
     cost_bps: float = 10.0,
     min_cross: int = 100,
-) -> tuple[dict[int, float], ExitProxyStats, int]:
-    """Build session-level net strategy returns for EW H–L next-open path.
+) -> tuple[list[tuple[int, int, float]], ExitProxyStats, int]:
+    """Per-cohort EW H–L net returns for the next-open path.
 
     formation_rows: each dict has chart session_idx, list of (instrument, score)
     open_px/close_px: (instrument, session_idx) -> price
-    session_idx_list: sorted full calendar session indices covering OOS
 
-    Each formable cohort contributes its open→open H–L net return equally over
-    sessions in [entry, exit). Concurrent cohorts are averaged with weight 1/K_R
-    where K_R is from planned intervals (plan §8.2).
+    Returns (cohorts, stats, k_r); each cohort is (entry_session, exit_session,
+    net_return) for the holding window [entry, exit). Formable cohorts with an
+    empty leg contribute 0.0 (cash slot). On the non-overlapping formation grid
+    these period returns are the primary quantity for performance statistics:
+    annualise Sharpe with ``sharpe_from_period_returns`` (factor sqrt(252/R)),
+    not from the flat-spread daily series (docs/ERRATA.md).
     """
     stats = ExitProxyStats()
     if not formation_rows:
-        return {}, stats, 1
+        return [], stats, 1
 
     # planned K_R
     pairs = []
@@ -205,9 +213,13 @@ def event_driven_hl_daily_returns(
                     stats.n_exact_exit += 1
                     xp = float(xo)
                 else:
-                    # frozen exit proxy: last verifiable close at or before exit session
+                    # frozen exit proxy: last verifiable close in [entry, exit_].
+                    # Never look back past the entry session: a close taken
+                    # before entry would mark the leg over a window it never
+                    # held (fabricated return). If no close exists at or after
+                    # entry, the leg is treated as unfilled instead.
                     xp = None
-                    for t in range(exit_, sidx - 1, -1):
+                    for t in range(exit_, entry - 1, -1):
                         c = close_px.get((inst, t))
                         if c is not None and np.isfinite(c) and c > 0:
                             xp = float(c)
@@ -232,6 +244,44 @@ def event_driven_hl_daily_returns(
         cohort_r = 0.5 * float(np.mean(h_rets)) + 0.5 * float(np.mean(l_rets))
         cohorts.append((entry, exit_, cohort_r))
 
+    return cohorts, stats, k_r
+
+
+def event_driven_hl_daily_returns(
+    *,
+    formation_rows: Sequence[dict],
+    open_px: Mapping[tuple[str, int], float],
+    close_px: Mapping[tuple[str, int], float],
+    session_idx_list: Sequence[int],
+    horizon_R: int,
+    cost_bps: float = 10.0,
+    min_cross: int = 100,
+) -> tuple[dict[int, float], ExitProxyStats, int]:
+    """Flat-spread session series for NAV-style paths — NOT a Sharpe input.
+
+    session_idx_list: sorted full calendar session indices covering OOS.
+    Each formable cohort contributes its whole-period net return spread evenly
+    over sessions in [entry, exit), stacked with weight 1/K_R where K_R is from
+    planned intervals (plan §8.2).
+
+    WARNING (docs/ERRATA.md): on the non-overlapping formation grid (K_R = 1)
+    this series is piecewise constant over R-session blocks. Its per-session
+    volatility understates mark-to-market volatility by roughly sqrt(R), so
+    feeding it to ``sharpe_from_daily`` with ann_factor=252 overstates the
+    annualised Sharpe by roughly sqrt(R) (≈4.5x at R=20, ≈7.7x at R=60). Use
+    ``event_driven_hl_cohort_returns`` + ``sharpe_from_period_returns`` for
+    Sharpe statistics; keep this series for NAV plotting and slot accounting.
+    """
+    if not formation_rows:
+        return {}, ExitProxyStats(), 1
+    cohorts, stats, k_r = event_driven_hl_cohort_returns(
+        formation_rows=formation_rows,
+        open_px=open_px,
+        close_px=close_px,
+        horizon_R=horizon_R,
+        cost_bps=cost_bps,
+        min_cross=min_cross,
+    )
     # Spread each cohort return evenly over holding sessions; stack with 1/K_R
     daily: dict[int, float] = {int(t): 0.0 for t in session_idx_list}
     hold = max(horizon_R, 1)
@@ -245,6 +295,14 @@ def event_driven_hl_daily_returns(
 
 
 def sharpe_from_daily(returns: Iterable[float], ann_factor: float = 252.0) -> float:
+    """Sharpe = sqrt(ann_factor) * mean/std of the series passed in.
+
+    ``ann_factor`` must equal the number of observations per year for that
+    series: 252 for genuine daily marks, 252/R for non-overlapping R-session
+    period returns. Do NOT pass the flat-spread series from
+    ``event_driven_hl_daily_returns`` with ann_factor=252 — that combination
+    overstates Sharpe by ~sqrt(R) (docs/ERRATA.md).
+    """
     x = np.asarray(list(returns), dtype=float)
     x = x[np.isfinite(x)]
     if x.size < 3:
@@ -253,3 +311,21 @@ def sharpe_from_daily(returns: Iterable[float], ann_factor: float = 252.0) -> fl
     if sd <= 0:
         return float("nan")
     return float(np.sqrt(ann_factor) * x.mean() / sd)
+
+
+def sharpe_from_period_returns(
+    returns: Iterable[float],
+    horizon_R: int,
+    *,
+    trading_days_per_year: float = 252.0,
+) -> float:
+    """Annualised Sharpe from non-overlapping R-session period returns.
+
+    Uses ann_factor = trading_days_per_year / R, i.e. sqrt(252/R) annualisation
+    on the equity calendar — the period-return analogue of the crypto path in
+    ``src_snapshot/crypto/metrics_oos.py`` (sqrt(365/R)). This is the corrected
+    headline estimator for the Study A economic path (docs/ERRATA.md).
+    """
+    if horizon_R <= 0:
+        raise ValueError("horizon_R must be positive")
+    return sharpe_from_daily(returns, ann_factor=trading_days_per_year / float(horizon_R))
