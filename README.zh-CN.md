@@ -3,6 +3,12 @@
 **语言：** [English](README.md) · [中文](README.zh-CN.md)  
 **仓库：** [Reimaging-Price-Trend-OHLC-Crypto](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto)
 
+> **⚠️ 勘误（2026-07）。** 代码审查发现下文研究 A 经济路径的夏普值因均摊日化
+> 口径被放大约 √(R·f) 倍，且空头腿公式存在向上偏差；三格平均 Δ（含 +0.18 的
+> 额权 clip 头条）在重算前不可靠，另有若干格子图像覆盖不全。刷新前请勿引用
+> 本文件中研究 A 的经济数字。详情、修正估计量与进度见
+> [docs/ERRATA.md](docs/ERRATA.md)。
+
 ## 摘要
 
 基于灰度 OHLC 图像的横截面预测，是检验视觉价格趋势信号的标准路径，方法谱系见 Jiang、Kelly 与 Xiu（2023），*The Journal of Finance*（[doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)）。两个关键设计问题仍未充分厘清：日线 K 线如何绘制，以及股票配方能否延伸至股票之外。
@@ -100,6 +106,7 @@ NOTICE
 LICENSE
 docs/
   SCIENTIFIC-OVERVIEW.md
+  ERRATA.md
   METHODS.md
   INTERPRETATION.md
   METHODS-crypto.md
