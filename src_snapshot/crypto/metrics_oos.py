@@ -34,12 +34,23 @@ def _rankdata(a: np.ndarray) -> np.ndarray:
 
 
 def spearman_ic(scores: np.ndarray, rets: np.ndarray) -> float:
+    """Spearman correlation; NaN when either side is constant.
+
+    (Previously a +1e-12 fudge made constant inputs yield ~0.0 while the pure
+    implementation in ``transfer_metrics.spearman_ic`` yields NaN; the two
+    now share NaN semantics. Degenerate dates are skipped and counted by
+    ``summarise_by_date``.)
+    """
     if len(scores) < 3:
         return float("nan")
     rs = _rankdata(scores)
     rr = _rankdata(rets)
-    rs = (rs - rs.mean()) / (rs.std(ddof=0) + 1e-12)
-    rr = (rr - rr.mean()) / (rr.std(ddof=0) + 1e-12)
+    ss = float(rs.std(ddof=0))
+    sr = float(rr.std(ddof=0))
+    if ss <= 0.0 or sr <= 0.0:
+        return float("nan")
+    rs = (rs - rs.mean()) / ss
+    rr = (rr - rr.mean()) / sr
     return float(np.mean(rs * rr))
 
 
@@ -67,11 +78,17 @@ def summarise_by_date(
         by_date[d].append(i)
     ics: list[float] = []
     ls: list[float] = []
+    n_skipped_nan = 0
     for d, idxs in sorted(by_date.items()):
         idxs_a = np.asarray(idxs)
         if len(idxs_a) < min_names:
             continue
-        ics.append(spearman_ic(scores[idxs_a], rets[idxs_a]))
+        ic = spearman_ic(scores[idxs_a], rets[idxs_a])
+        if math.isnan(ic):
+            # degenerate cross-section (e.g. constant scores) — skip, but count
+            n_skipped_nan += 1
+            continue
+        ics.append(ic)
         ls.append(decile_long_short(scores[idxs_a], rets[idxs_a]))
     ics_a = np.asarray(ics, dtype=np.float64)
     ls_a = np.asarray(ls, dtype=np.float64)
@@ -85,11 +102,14 @@ def summarise_by_date(
         if std_ls and std_ls > 0
         else float("nan")
     )
+    # NAV/MaxDD proxy: NaN LS periods are compounded as 0 (cash), consistent
+    # with the ls_sharpe proxy framing in the module docstring.
     nav = np.cumprod(1.0 + np.nan_to_num(ls_a, nan=0.0))
     peak = np.maximum.accumulate(nav) if len(nav) else np.array([1.0])
     dd = (nav / peak - 1.0) if len(nav) else np.array([0.0])
     return {
         "n_ic_dates": float(len(ics)),
+        "n_ic_dates_skipped_nan": float(n_skipped_nan),
         "rank_ic_mean": mean_ic,
         "rank_ic_std": std_ic,
         "icir": icir,
