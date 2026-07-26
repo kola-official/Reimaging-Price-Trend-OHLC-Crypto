@@ -3,6 +3,14 @@
 **Languages:** [English](README.md) · [中文](README.zh-CN.md)  
 **Repository:** [Reimaging-Price-Trend-OHLC-Crypto](https://github.com/kola-official/Reimaging-Price-Trend-OHLC-Crypto)
 
+> **⚠️ Errata (2026-07).** A code review found that the Study A economic-path
+> Sharpes below are inflated by ≈√(R·f) (flat-spread daily annualisation) and
+> carry an upward short-leg bias; the cross-cell "mean Δ vs raw" figures,
+> including the +0.18 dollar-clip headline, are therefore unreliable pending
+> recomputation. Several cells also rest on partial image coverage. Study A
+> economic numbers in this file should not be quoted until refreshed.
+> Details, corrected estimators and status: [docs/ERRATA.md](docs/ERRATA.md).
+
 ## Abstract
 
 Cross-sectional forecasts from greyscale OHLC images are a standard route for testing visual price-trend signals, following Jiang, Kelly and Xiu (2023) in *The Journal of Finance* ([doi:10.1111/jofi.13268](https://doi.org/10.1111/jofi.13268)). Two design choices remain incompletely mapped: how the daily bar is drawn, and whether the equity recipe extends beyond equities.
@@ -109,6 +117,7 @@ NOTICE
 LICENSE
 docs/
   SCIENTIFIC-OVERVIEW.md
+  ERRATA.md
   METHODS.md
   INTERPRETATION.md
   METHODS-crypto.md

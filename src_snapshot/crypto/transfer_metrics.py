@@ -95,16 +95,28 @@ def summarise_rank_ic_by_date(
         by_date[d].append(i)
     ics: list[float] = []
     ls_vals: list[float] = []
+    n_skipped_nan = 0
     for d, idxs in sorted(by_date.items()):
         if len(idxs) < min_names:
             continue
         s = [scores[i] for i in idxs]
         r = [rets[i] for i in idxs]
-        ics.append(spearman_ic(s, r))
-        ls_vals.append(decile_long_short(s, r))
+        ic = spearman_ic(s, r)
+        if math.isnan(ic):
+            # Degenerate cross-section (e.g. constant ensemble probabilities
+            # under a saturated frozen model). Previously a single NaN here
+            # propagated through sum() and poisoned rank_ic_mean; now the date
+            # is skipped and counted, matching metrics_oos.summarise_by_date.
+            n_skipped_nan += 1
+            continue
+        ics.append(ic)
+        ls_v = decile_long_short(s, r)
+        if not math.isnan(ls_v):
+            ls_vals.append(ls_v)
     if not ics:
         return {
             "n_ic_dates": 0.0,
+            "n_ic_dates_skipped_nan": float(n_skipped_nan),
             "rank_ic_mean": float("nan"),
             "rank_ic_std": float("nan"),
             "icir": float("nan"),
@@ -132,6 +144,7 @@ def summarise_rank_ic_by_date(
     )
     return {
         "n_ic_dates": float(len(ics)),
+        "n_ic_dates_skipped_nan": float(n_skipped_nan),
         "rank_ic_mean": mean_ic,
         "rank_ic_std": std_ic,
         "icir": icir,

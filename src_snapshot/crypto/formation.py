@@ -39,11 +39,24 @@ def formation_dates(anchor: date, start: date, end: date, step_days: int) -> lis
 
 
 def purge_validation_min_index(train_max_chart_index: int, horizon_r: int, image_window_i: int) -> int:
-    """Purged validation cut: val index must be > train_max + R + (2I - 2)."""
+    """Purged validation cut: val index must be > train_max + R + (2I - 2).
+
+    Exactly tight (zero slack) under the label convention r = C[t+R]/C[t] - 1,
+    whose data window ends on day t+R, and an image dependency span of 2I-1
+    days (window I plus MA(I) warm-up). If the label convention ever moves to
+    the delayed-execution window (entry t+1, exit t+R+1), this cut becomes one
+    day short — revisit before reuse.
+    """
     return train_max_chart_index + horizon_r + (2 * image_window_i - 2)
 
 
 def oos_tail_formation_valid(chart_date: date, horizon_r: int, oos_end: date) -> bool:
-    """Drop formation if the label exit day falls after inclusive OOS end."""
+    """Drop formation if the label-or-execution exit day falls after OOS end.
+
+    t + R + 1 is the delayed-execution exit day (entry t+1, exit t+R+1); the
+    close-to-close label itself only needs data through t + R. Using the later
+    of the two implements config rule
+    ``drop_oos_rows_if_label_or_execution_crosses_oos_end``.
+    """
     exit_day = chart_date + timedelta(days=horizon_r + 1)
     return exit_day <= oos_end

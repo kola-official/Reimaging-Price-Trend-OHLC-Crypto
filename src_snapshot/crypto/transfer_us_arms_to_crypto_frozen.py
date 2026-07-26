@@ -26,12 +26,22 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from crypto_reimaging.transfer_metrics import (  # noqa: E402
-    ARM_ALIASES,
-    ARM_DISPLAY,
-    TRANSFER_MODE,
-    summarise_rank_ic_by_date,
-)
+try:
+    # Engineering-workspace layout (package name crypto_reimaging)
+    from crypto_reimaging.transfer_metrics import (  # noqa: E402
+        ARM_ALIASES,
+        ARM_DISPLAY,
+        TRANSFER_MODE,
+        summarise_rank_ic_by_date,
+    )
+except ImportError:  # pragma: no cover - published snapshot layout
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from transfer_metrics import (  # noqa: E402
+        ARM_ALIASES,
+        ARM_DISPLAY,
+        TRANSFER_MODE,
+        summarise_rank_ic_by_date,
+    )
 
 
 def sha256_file(path: Path) -> str:
@@ -64,6 +74,7 @@ def score_arm(
     device: torch.device,
     batch: int,
     seeds: list[int],
+    min_names: int = 50,
 ) -> dict[str, Any]:
     sys.path.insert(0, str(shared_root))
     from src.hfdata.models import build_model  # type: ignore
@@ -82,7 +93,13 @@ def score_arm(
         ck_path = seed_dir / "best_checkpoint.pt"
         if not ck_path.is_file():
             raise FileNotFoundError(ck_path)
-        ckpt = torch.load(ck_path, map_location="cpu", weights_only=False)
+        try:
+            # Prefer the safe loader; our checkpoints contain a state dict and
+            # scalar stats only, which weights_only=True accepts.
+            ckpt = torch.load(ck_path, map_location="cpu", weights_only=True)
+        except Exception:
+            print(f"WARNING: weights_only load failed for {ck_path}; falling back", flush=True)
+            ckpt = torch.load(ck_path, map_location="cpu", weights_only=False)
         if not isinstance(ckpt, dict) or "model" not in ckpt:
             raise RuntimeError(f"unexpected checkpoint schema: {ck_path}")
         # Freeze rule: US train-only stats from checkpoint, never crypto OOS/IS.
@@ -129,7 +146,7 @@ def score_arm(
     rets = [float(row["future_return"]) for row in meta]
     labels = np.asarray([int(row["label"]) for row in meta], dtype=np.int64)
     dates = [row["chart_date"] for row in meta]
-    summary = summarise_rank_ic_by_date(ens.tolist(), rets, dates, horizon)
+    summary = summarise_rank_ic_by_date(ens.tolist(), rets, dates, horizon, min_names=min_names)
 
     try:
         from sklearn.metrics import roc_auc_score
@@ -162,7 +179,9 @@ def score_arm(
             else "cross_representation_us_expand_or_clip_weights_on_crypto_raw_images"
         ),
         "n_pred_rows": int(len(meta)),
+        "min_names_per_formation_date": int(min_names),
         "n_ic_dates": int(summary["n_ic_dates"]),
+        "n_ic_dates_skipped_nan": int(summary.get("n_ic_dates_skipped_nan", 0)),
         "rank_ic_mean": float(summary["rank_ic_mean"]),
         "rank_ic_std": float(summary["rank_ic_std"]),
         "icir": float(summary["icir"]),
@@ -205,6 +224,18 @@ def main() -> int:
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument(
+        "--min-names",
+        type=int,
+        default=50,
+        help=(
+            "minimum cross-section size per formation date for Rank IC / decile "
+            "sorts; protocol value is 50 (configs/crypto_daily_reimaging_v1.yaml "
+            "minimum_names_for_deciles). NOTE: the 2026-07-24 published run used "
+            "the previous library default of 10; the effective value is recorded "
+            "in the output payload as min_names_per_formation_date."
+        ),
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path("outputs/oos/us_to_crypto_direct_transfer_i20_r20.json"),
@@ -230,6 +261,7 @@ def main() -> int:
                 device=device,
                 batch=args.batch_size,
                 seeds=list(args.seeds),
+                min_names=int(args.min_names),
             )
             results.append(rec)
             print(
